@@ -6,3 +6,8 @@ __pycache__/
 .ipynb_checkpoints/
 paper/paper.txt
 paper/parts/
+
+# PDF лежат на диске, но в git не входят: 162 МБ бинарников.
+# Выгрузка воспроизводится: src/fetch_pdfs.py и src/import_downloads.py,
+# перечень всех работ со ссылками — library/pdf/manifest.json.
+library/pdf/*.pdf
