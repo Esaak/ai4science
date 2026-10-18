@@ -2,7 +2,7 @@
   "собрано": "2026-10-18",
   "источник адресов": "OpenAlex, best_oa_location.pdf_url",
   "всего работ": 53,
-  "скачано": 16,
+  "скачано": 18,
   "записи": [
     {
       "id": "W4318474508",
@@ -480,6 +480,22 @@
       "источник": "https://www.mdpi.com/1999-4907/13/8/1195/pdf?version=1659006632",
       "страница": "https://doi.org/10.3390/f13081195",
       "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W4308203280",
+      "файл": "fellini_2022_W4308203280.pdf",
+      "title": "High resolution wind-tunnel investigation about the effect of street trees on pollutant concentration and street canyon ventilation",
+      "oa_status": "bronze",
+      "источник": "выгружено вручную",
+      "байт": 30312598
+    },
+    {
+      "id": "W7125780903",
+      "файл": "meddage_2026_W7125780903.pdf",
+      "title": "Surrogate modelling of unsteady wind pressure on tall buildings with varying slenderness and side ratios using attention-based neural networks",
+      "oa_status": "hybrid",
+      "источник": "выгружено вручную",
+      "байт": 25754100
     }
   ],
   "дополнено с arXiv": "2026-10-18"

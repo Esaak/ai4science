@@ -5,6 +5,10 @@
 документов не виден, на полных текстах виден. Страницы размечаются метками [с. N].
 Файл записи в library/ остаётся коротким, в него добавляется ссылка на текст.
 
+Сам текст в corpus.jsonl не кладётся — только имя файла в поле text_file и число слов:
+иначе одно и то же лежало бы дважды и каждый пересбор корпуса добавлял бы в историю
+git копию на несколько мегабайт. Читать текст — из library/text/<text_file>.
+
 Запуск из корня проекта:  .venv/bin/python -I src/extract_text.py
 """
 import json
@@ -40,7 +44,7 @@ def main():
         out = TXT / f"{name}.md"
         if out.exists() and out.stat().st_size > 0:
             d["text_file"] = out.name
-            d["full_text"] = out.read_text(encoding="utf-8")
+            d["words"] = len(out.read_text(encoding="utf-8").split())
             skipped += 1
             continue
         try:
@@ -65,7 +69,7 @@ def main():
             f"[источник] Текст извлечён из `pdf/{pdf.name}`; метки `[с. N]` — страницы.\n"
             + text + "\n", encoding="utf-8")
         d["text_file"] = out.name
-        d["full_text"] = text
+        d["words"] = words
         done += 1
         print(f"  + {name[:46]:48s} {len(pages):3d} с., {words:6d} слов")
 
@@ -74,7 +78,7 @@ def main():
             f.write(json.dumps(d, ensure_ascii=False) + "\n")
 
     with_text = [d for d in docs if d.get("text_file")]
-    w = [len(d["full_text"].split()) for d in with_text]
+    w = [d["words"] for d in with_text]
     print(f"\nизвлечено {done}, уже было {skipped}; текстов всего {len(with_text)}")
     if w:
         print(f"слов в тексте: минимум {min(w)}, медиана {sorted(w)[len(w)//2]}, максимум {max(w)}")
