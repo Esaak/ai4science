@@ -1,0 +1,485 @@
+{
+  "собрано": "2026-10-18",
+  "источник адресов": "OpenAlex, best_oa_location.pdf_url",
+  "всего работ": 53,
+  "скачано": 16,
+  "записи": [
+    {
+      "id": "W4318474508",
+      "файл": null,
+      "title": "Application of a Machine Learning Method for Prediction of Urban Neighborhood-Scale Air Pollution",
+      "oa_status": "gold",
+      "источник": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9915966/pdf/ijerph-20-02412.pdf",
+      "страница": "https://doi.org/10.3390/ijerph20032412",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W1968494332",
+      "файл": null,
+      "title": "Numerical Investigation of Neutral and Unstable Planetary Boundary Layers",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2179285023",
+      "файл": null,
+      "title": "A Large-Eddy-Simulation Model for the Study of Planetary Boundary-Layer Turbulence",
+      "oa_status": "bronze",
+      "источник": "https://journals.ametsoc.org/downloadpdf/journals/atsc/41/13/1520-0469_1984_041_2052_alesmf_2_0_co_2.pdf",
+      "страница": "https://doi.org/10.1175/1520-0469(1984)041<2052:alesmf>2.0.co;2",
+      "причина": "ValueError: не PDF (первые байты b'', 0 байт)"
+    },
+    {
+      "id": "W4220716019",
+      "файл": null,
+      "title": "Hazardous atmospheric dispersion in urban areas: A Deep Learning approach for emergency pollution forecast",
+      "oa_status": "bronze",
+      "источник": null,
+      "страница": "https://doi.org/10.1016/j.envsoft.2022.105387",
+      "причина": "только страница, прямого PDF нет"
+    },
+    {
+      "id": "W2515505748",
+      "файл": null,
+      "title": "Convolutional Neural Networks for Steady Flow Approximation",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W3200982616",
+      "файл": null,
+      "title": "Deep learning to replace, improve, or aid CFD analysis in built environment applications: A review",
+      "oa_status": "hybrid",
+      "источник": "https://www.sciencedirect.com/science/article/pii/S0360132321007137/pdf",
+      "страница": "https://doi.org/10.1016/j.buildenv.2021.108315",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W2971765423",
+      "файл": null,
+      "title": "Data-driven model for cross ventilation potential in high-density cities based on coupled CFD simulation and machine learning",
+      "oa_status": "green",
+      "источник": "https://www.osti.gov/servlets/purl/1564080",
+      "страница": "https://www.osti.gov/biblio/1564080",
+      "причина": "URLError: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)>"
+    },
+    {
+      "id": "W3092923133",
+      "файл": "li_2020_W3092923133.pdf",
+      "title": "Fourier Neural Operator for Parametric Partial Differential Equations",
+      "oa_status": "green",
+      "источник": "https://arxiv.org/pdf/2010.08895",
+      "страница": "http://arxiv.org/abs/2010.08895",
+      "байт": 2436198
+    },
+    {
+      "id": "W2286587599",
+      "файл": "glazunov_2016_W2286587599.pdf",
+      "title": "Large-eddy simulation and stochastic modeling of Lagrangian particles for footprint determination in the stable boundary layer",
+      "oa_status": "gold",
+      "источник": "https://www.geosci-model-dev.net/9/2925/2016/gmd-9-2925-2016.pdf",
+      "страница": "https://doi.org/10.5194/gmd-9-2925-2016",
+      "байт": 1572323
+    },
+    {
+      "id": "W2938932497",
+      "файл": null,
+      "title": "Numerical study of plane Couette flow: turbulence statistics and the structure of pressure–strain correlations",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2946261452",
+      "файл": null,
+      "title": "Bulk Models of Sheared Boundary Layer Convection",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2168795429",
+      "файл": null,
+      "title": "GENERAL CIRCULATION EXPERIMENTS WITH THE PRIMITIVE EQUATIONS",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2074447412",
+      "файл": null,
+      "title": "A dynamic subgrid-scale eddy viscosity model",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2062712788",
+      "файл": null,
+      "title": "A proposed modification of the Germano subgrid-scale closure method",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2848033333",
+      "файл": "liu_2018_W2848033333.pdf",
+      "title": "An Intriguing Failing of Convolutional Neural Networks and the CoordConv Solution",
+      "oa_status": "green",
+      "источник": "https://arxiv.org/pdf/1807.03247",
+      "страница": "http://arxiv.org/abs/1807.03247",
+      "байт": 9787127
+    },
+    {
+      "id": "W1901129140",
+      "файл": "ronneberger_2015_W1901129140.pdf",
+      "title": "U-Net: Convolutional Networks for Biomedical Image Segmentation",
+      "oa_status": "bronze",
+      "источник": "https://link.springer.com/content/pdf/10.1007/978-3-319-24574-4_28.pdf",
+      "страница": "https://doi.org/10.1007/978-3-319-24574-4_28",
+      "байт": 1540391
+    },
+    {
+      "id": "W2760103357",
+      "файл": "perez_2018_W2760103357.pdf",
+      "title": "FiLM: Visual Reasoning with a General Conditioning Layer",
+      "oa_status": "diamond",
+      "источник": "https://arxiv.org/pdf/1707.03017",
+      "страница": "https://doi.org/10.1609/aaai.v32i1.11671",
+      "байт": 959098
+    },
+    {
+      "id": "W2084059271",
+      "файл": null,
+      "title": "Air quality model performance evaluation",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W4404452021",
+      "файл": null,
+      "title": "Uncertainty-aware surrogate modeling for urban air pollutant dispersion prediction",
+      "oa_status": "hybrid",
+      "источник": "https://hal.science/hal-04813685/document",
+      "страница": "https://doi.org/10.1016/j.buildenv.2024.112287",
+      "причина": "ValueError: не PDF (первые байты b'<!doctyp', 12609 байт)"
+    },
+    {
+      "id": "W4416705912",
+      "файл": null,
+      "title": "Fast prediction of urban wind distribution with deep learning-based surrogate models",
+      "oa_status": "bronze",
+      "источник": "https://publications.ibpsa.org/proceedings/bs/2025/papers/bs2025_1893.pdf",
+      "страница": "https://doi.org/10.26868/25222708.2025.1893",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W7139074309",
+      "файл": null,
+      "title": "Dataset and Surrogate models based on 2D RANS thermal street canyon pollutant dispersion.",
+      "oa_status": "green",
+      "источник": null,
+      "страница": "https://doi.org/10.5281/zenodo.19091320",
+      "причина": "только страница, прямого PDF нет"
+    },
+    {
+      "id": "W4293593643",
+      "файл": "kocijan_2022_W4293593643.pdf",
+      "title": "Surrogate modelling for the forecast of Seveso-type atmospheric pollutant dispersion",
+      "oa_status": "hybrid",
+      "источник": "https://link.springer.com/content/pdf/10.1007/s00477-022-02288-x.pdf",
+      "страница": "https://doi.org/10.1007/s00477-022-02288-x",
+      "байт": 8263377
+    },
+    {
+      "id": "W4403196103",
+      "файл": "liu_2024_W4403196103.pdf",
+      "title": "Application of DNM And Hec-Ras Model For Pollutant Dispersion Patterns in Rivers",
+      "oa_status": "bronze",
+      "источник": "https://repozitorium.omikk.bme.hu/bitstreams/05320e97-c3a9-42ba-92b6-251ff7a40d0c/download",
+      "страница": "https://doi.org/10.3311/ccc2024-153",
+      "байт": 830273
+    },
+    {
+      "id": "W7165325453",
+      "файл": null,
+      "title": "High-fidelity CFD modelling of urban pollutant dispersion for air quality assessment",
+      "oa_status": "green",
+      "источник": "https://upcommons.upc.edu/bitstreams/83bffcb4-55f4-42a1-8819-0d2b081b5fc1/download",
+      "страница": "https://hdl.handle.net/2117/464347",
+      "причина": "HTTPError: HTTP Error 418: I'm a teapot"
+    },
+    {
+      "id": "W7131065238",
+      "файл": null,
+      "title": "A Surrogate Model for Urban Wind Flow Prediction Around a High-Rise Building",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W3134439745",
+      "файл": "zheng_2021_W3134439745.pdf",
+      "title": "Large-eddy simulation of pollutant dispersion in generic urban street canyons: Guidelines for domain size",
+      "oa_status": "hybrid",
+      "источник": "https://lirias.kuleuven.be/retrieve/84e3675d-6b31-44f3-a78c-54b1eceec38c",
+      "страница": "https://doi.org/10.1016/j.jweia.2021.104527",
+      "байт": 6205976
+    },
+    {
+      "id": "W7219493696",
+      "файл": "yazid_2015_W7219493696.pdf",
+      "title": "Large Eddy Simulations of Pollutant Dispersion in a Street Canyon",
+      "oa_status": "hybrid",
+      "источник": "https://semarakilmu.com.my/journals/index.php/fluid_mechanics_thermal_sciences/article/download/2544/1316",
+      "страница": "https://semarakilmu.com.my/journals/index.php/fluid_mechanics_thermal_sciences/article/view/2544",
+      "байт": 657770
+    },
+    {
+      "id": "W4283691980",
+      "файл": "hassan_2022_W4283691980.pdf",
+      "title": "Large-Eddy Simulation of Airflow and Pollutant Dispersion in a Model Street Canyon Intersection of Dhaka City",
+      "oa_status": "gold",
+      "источник": "https://eprints.whiterose.ac.uk/200793/1/Large-Eddy%20Simulation%20of%20Airflow%20and%20Pollutant%20Dispersion%20in%20a.pdf",
+      "страница": "https://doi.org/10.3390/atmos13071028",
+      "байт": 12313856
+    },
+    {
+      "id": "W2906903649",
+      "файл": null,
+      "title": "Qualitative and Quantitative Investigation of Multiple Large Eddy Simulation Aspects for Pollutant Dispersion in Street Canyons Using OpenFOAM",
+      "oa_status": "gold",
+      "источник": "https://www.mdpi.com/2073-4433/10/1/17/pdf?version=1546857231",
+      "страница": "https://doi.org/10.3390/atmos10010017",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W2278173688",
+      "файл": null,
+      "title": "POLLUTANT DISPERSION OVER TWO-DIMENSIONAL IDEALIZED STREET CANYONS: A LARGE-EDDY SIMULATION APPROACH",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2228567190",
+      "файл": null,
+      "title": "Large eddy simulation of the effect of hat fux on pollutant dispersion in an urban street canyon",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W2117239075",
+      "файл": null,
+      "title": "Modelling of pollutant dispersion in urban street canyons by means of a large-eddy simulation approach",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W4310235246",
+      "файл": null,
+      "title": "Fast Prediction of Flow Field around Airfoils Based on Deep Convolutional Neural Network",
+      "oa_status": "gold",
+      "источник": "https://www.mdpi.com/2076-3417/12/23/12075/pdf?version=1669708851",
+      "страница": "https://doi.org/10.3390/app122312075",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W4403136121",
+      "файл": "rana_2024_W4403136121.pdf",
+      "title": "A scalable convolutional neural network approach to fluid flow prediction in complex environments",
+      "oa_status": "gold",
+      "источник": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11452649/pdf/41598_2024_Article_73529.pdf",
+      "страница": "https://doi.org/10.1038/s41598-024-73529-y",
+      "байт": 3999845
+    },
+    {
+      "id": "W4386884969",
+      "файл": null,
+      "title": "A Convolutional Neural Network for Steady-State Flow Approximation Trained on a Small Sample Size",
+      "oa_status": "gold",
+      "источник": "https://www.mdpi.com/2073-4433/14/9/1462/pdf?version=1695217778",
+      "страница": "https://doi.org/10.3390/atmos14091462",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W3094078312",
+      "файл": null,
+      "title": "Steady Flow Approximation using Capsule Neural Networks",
+      "oa_status": "closed",
+      "источник": null,
+      "страница": null,
+      "причина": "открытой копии нет"
+    },
+    {
+      "id": "W3164867305",
+      "файл": "eichinger_2022_W3164867305.pdf",
+      "title": "Surrogate convolutional neural network models for steady computational fluid dynamics simulations",
+      "oa_status": "bronze",
+      "источник": "https://epub.oeaw.ac.at/0xc1aa5576_0x003d4c21.pdf",
+      "страница": "https://doi.org/10.1553/etna_vol56s235",
+      "байт": 6584682
+    },
+    {
+      "id": "W3093190107",
+      "файл": "kashefi_2021_W3093190107.pdf",
+      "title": "A point-cloud deep learning framework for prediction of fluid flow fields on irregular geometries",
+      "oa_status": "green",
+      "источник": "https://arxiv.org/pdf/2010.09469",
+      "страница": "http://arxiv.org/abs/2010.09469",
+      "байт": 26667960
+    },
+    {
+      "id": "W3017179166",
+      "файл": "ribeiro_2020_W3017179166.pdf",
+      "title": "DeepCFD: Efficient Steady-State Laminar Flow Approximation with Deep Convolutional Neural Networks",
+      "oa_status": "green",
+      "источник": "https://arxiv.org/pdf/2004.08826",
+      "страница": "http://arxiv.org/abs/2004.08826",
+      "байт": 2255305
+    },
+    {
+      "id": "W1969621693",
+      "файл": null,
+      "title": "Judging Air Quality Model Performance",
+      "oa_status": "bronze",
+      "источник": "https://journals.ametsoc.org/downloadpdf/journals/bams/62/5/1520-0477_1981_062_0599_jaqmp_2_0_co_2.pdf",
+      "страница": "https://doi.org/10.1175/1520-0477(1981)062<0599:jaqmp>2.0.co;2",
+      "причина": "ValueError: не PDF (первые байты b'', 0 байт)"
+    },
+    {
+      "id": "W2130985850",
+      "файл": null,
+      "title": "Air Quality Model Evaluation and Uncertainty",
+      "oa_status": "bronze",
+      "источник": "https://www.tandfonline.com/doi/pdf/10.1080/08940630.1988.10466390?needAccess=true",
+      "страница": "https://doi.org/10.1080/08940630.1988.10466390",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W1976980884",
+      "файл": null,
+      "title": "Performance evaluation of AERMOD, CALPUFF, and legacy air dispersion models using the Winter Validation Tracer Study dataset",
+      "oa_status": "hybrid",
+      "источник": "https://www.sciencedirect.com/science/article/pii/S1352231014001502/pdf",
+      "страница": "https://doi.org/10.1016/j.atmosenv.2014.02.054",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W2078794519",
+      "файл": null,
+      "title": "Dispersion modeling of air pollutants in the atmosphere: a review",
+      "oa_status": "gold",
+      "источник": "https://www.degruyter.com/document/doi/10.2478/s13533-012-0188-6/pdf",
+      "страница": "https://doi.org/10.2478/s13533-012-0188-6",
+      "причина": "ValueError: не PDF (первые байты b'', 0 байт)"
+    },
+    {
+      "id": "W2005964440",
+      "файл": null,
+      "title": "On the Comparative Assessment of the Performance of Air Quality Models",
+      "oa_status": "bronze",
+      "источник": "https://www.tandfonline.com/doi/pdf/10.1080/00022470.1981.10465286?needAccess=true&role=button",
+      "страница": "https://doi.org/10.1080/00022470.1981.10465286",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W3036519679",
+      "файл": null,
+      "title": "Atmospheric Pollutant Dispersion over Complex Terrain: Challenges and Needs for Improving Air Quality Measurements and Modeling",
+      "oa_status": "gold",
+      "источник": "https://www.mdpi.com/2073-4433/11/6/646/pdf?version=1592460840",
+      "страница": "https://doi.org/10.3390/atmos11060646",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W2996962897",
+      "файл": "anon_2017_W2996962897.pdf",
+      "title": "Evaluation of three pollutant dispersion models for the environmental assessment of a district in Kocaeli, Turkey",
+      "oa_status": "bronze",
+      "источник": "https://journal.gnest.org/sites/default/files/Submissions/gnest_01901/gnest_01901_published.pdf",
+      "страница": "https://doi.org/10.30955/gnj.001901",
+      "байт": 1804745
+    },
+    {
+      "id": "W3037481038",
+      "файл": null,
+      "title": "Investigating the effect of trees on urban quality in Dublin by combining air monitoring with i-Tree Eco model",
+      "oa_status": "hybrid",
+      "источник": "https://www.sciencedirect.com/science/article/pii/S2210670720305771/pdf",
+      "страница": "https://doi.org/10.1016/j.scs.2020.102356",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W3134064167",
+      "файл": null,
+      "title": "Effect of trees on street canyon ventilation",
+      "oa_status": "gold",
+      "источник": "https://iris.polito.it/bitstream/11583/2851310/1/EGU2020-10661-print.pdf",
+      "страница": "https://doi.org/10.5194/egusphere-egu2020-10661",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W2116126296",
+      "файл": "grundstrm_2014_W2116126296.pdf",
+      "title": "Limited effect of urban tree vegetation on NO2 and O3 concentrations near a traffic route",
+      "oa_status": "hybrid",
+      "источник": "https://eprints.worc.ac.uk/7216/3/Grundstrom_etal_2014.pdf",
+      "страница": "https://doi.org/10.1016/j.envpol.2014.02.026",
+      "байт": 837080
+    },
+    {
+      "id": "W4390446491",
+      "файл": null,
+      "title": "Influence of obstacles on urban canyon ventilation and air pollutant concentration: An experimental assessment",
+      "oa_status": "hybrid",
+      "источник": "https://iris.polito.it/bitstream/11583/2991785/1/2024_obstacles_compressed.pdf",
+      "страница": "https://doi.org/10.1016/j.buildenv.2023.111143",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W2100785064",
+      "файл": null,
+      "title": "Vegetation: A Sink for Atmospheric Pollutants",
+      "oa_status": "bronze",
+      "источник": "https://www.tandfonline.com/doi/pdf/10.1080/00022470.1971.10469535?needAccess=true",
+      "страница": "https://doi.org/10.1080/00022470.1971.10469535",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W4220706766",
+      "файл": null,
+      "title": "Turbulent transfer and concentration statistics in a street canyon with tree planting",
+      "oa_status": "gold",
+      "источник": "https://iris.polito.it/bitstream/11583/2980705/1/EGU22-12683-print.pdf",
+      "страница": "https://doi.org/10.5194/egusphere-egu22-12683",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "W4288435115",
+      "файл": null,
+      "title": "Impact of Different Combinations of Green Infrastructure Elements on Traffic-Related Pollutant Concentrations in Urban Areas",
+      "oa_status": "gold",
+      "источник": "https://www.mdpi.com/1999-4907/13/8/1195/pdf?version=1659006632",
+      "страница": "https://doi.org/10.3390/f13081195",
+      "причина": "HTTPError: HTTP Error 403: Forbidden"
+    }
+  ]
+}

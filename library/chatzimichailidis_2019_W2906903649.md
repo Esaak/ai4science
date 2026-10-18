@@ -15,6 +15,7 @@ topic: "les-street-canyon"
 # Qualitative and Quantitative Investigation of Multiple Large Eddy Simulation Aspects for Pollutant Dispersion in Street Canyons Using OpenFOAM
 
 [источник] Arsenios E. Chatzimichailidis, Christos D. Argyropoulos, MARC J. ASSAEL, Konstantinos E. Kakosimos (2019). *Qualitative and Quantitative Investigation of Multiple Large Eddy Simulation Aspects for Pollutant Dispersion in Street Canyons Using OpenFOAM*. Atmosphere. DOI: 10.3390/atmos10010017.
+[написано] Полного текста в библиотеке нет: HTTPError: HTTP Error 403: Forbidden. Страница работы: https://doi.org/10.3390/atmos10010017
 
 ## Аннотация
 
