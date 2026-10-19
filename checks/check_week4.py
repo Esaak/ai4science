@@ -22,6 +22,17 @@
     --mermaid   записать схему графа в файл (просмотр без Obsidian)
     --no-git    не проверять чистоту рабочего дерева
 
+Виды проверки правил в поле `check` — восемь из `ontology_template.yaml` (`some`,
+`some_inverse`, `some_inverse_any`, `all_inverse`, `defined`, `defined_inverse`,
+`defined_value`, `section`, `disjoint_properties`) и два добавленных здесь:
+
+  * `exactly_one` — `C ⊑ = 1 R.D`: у каждого объекта класса ровно одна такая связь.
+    Шаблон курса кардинальности не проверяет, а утверждение «ровно одно» без проверки
+    остаётся словами;
+  * у `section` необязательные `attribute` и `values` — раздел требуется только у тех
+    объектов класса, у которых атрибут принимает одно из значений. Иначе правило
+    «у выполненной задачи есть Итог» приходится разрывать на два.
+
 Код 0 — все обязательные пункты выполнены. Проверка идёт в закрытом мире: «связь не
 найдена» значит «связь не записана», а не «связи не существует».
 """
@@ -272,6 +283,12 @@ def main() -> int:
     def node_fits(n: Note, allowed: list[str]) -> bool:
         return True if not allowed else any(n.rel_path in extension(c) for c in allowed)
 
+    def as_classes(v) -> list[str]:
+        """Поле target правила: класс или список классов."""
+        if v is None:
+            return []
+        return [x for x in (v if isinstance(v, list) else [v]) if x]
+
     def name_fits(name: str, allowed: list[str]) -> bool:
         """Ссылка [[имя]] годится, если подходит хоть одна заметка с этим именем."""
         if not allowed:
@@ -357,7 +374,7 @@ def main() -> int:
 
         if kind == "defined":
             got = {k for k in members
-                   if any(rel == prop and name_fits(tg, [chk.get("target")])
+                   if any(rel == prop and name_fits(tg, as_classes(chk.get("target")))
                           for rel, tg in node_by_key[k].links)}
             defined[chk["name"]] = got
             rep.ok(f"вывод по {rid}: {chk['name']} = {names(got)}")
@@ -373,9 +390,10 @@ def main() -> int:
             rep.ok(f"вывод по {rid}: {chk['name']} = {names(got)}")
         elif kind == "some":
             miss = [node_by_key[k].name for k in members
-                    if not any(rel == prop and name_fits(tg, [chk.get("target")])
+                    if not any(rel == prop and name_fits(tg, as_classes(chk.get("target")))
                                for rel, tg in node_by_key[k].links)]
-            _verdict(rep, rid, r, miss, f"нет связи «{prop}» к {chk.get('target')}")
+            _verdict(rep, rid, r, miss,
+                     f"нет связи «{prop}» к {'/'.join(as_classes(chk.get('target')))}")
         elif kind == "some_inverse":
             src_cls = chk.get("source")
             miss = [node_by_key[k].name for k in members
@@ -398,9 +416,25 @@ def main() -> int:
                 if outside:
                     miss.append(f"{node.name} ← {', '.join(outside)}")
             _verdict(rep, rid, r, miss, f"по связи «{prop}» ведут объекты не из {src_cls}")
+        elif kind == "exactly_one":
+            target = chk.get("target")
+            miss = []
+            for k in members:
+                n = node_by_key[k]
+                hit = [tg for rel, tg in n.links
+                       if rel == prop and name_fits(tg, as_classes(target))]
+                if len(hit) != 1:
+                    miss.append(f"{n.name} — связей {len(hit)}"
+                                + (f" ({', '.join(sorted(hit))})" if hit else ""))
+            _verdict(rep, rid, r, miss,
+                     f"связь «{prop}» к {'/'.join(as_classes(target))} "
+                     f"должна быть ровно одна")
         elif kind == "section":
             want = chk.get("section")
-            miss = [node_by_key[k].name for k in members
+            attr, vals = chk.get("attribute"), set(chk.get("values", []))
+            keys = [k for k in members
+                    if not attr or node_by_key[k].front.get(attr) in vals]
+            miss = [node_by_key[k].name for k in keys
                     if not any(sec.startswith(want) for sec in node_by_key[k].sections)]
             _verdict(rep, rid, r, miss, f"нет раздела «{want}»")
         elif kind == "disjoint_properties":
