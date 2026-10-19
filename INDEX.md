@@ -1,0 +1,28 @@
+# INDEX.md — где что лежит
+
+- `AGENTS.md` — файл-договор с агентом: правила, запреты, критерий готовности
+- `STATUS.md` — где проект сейчас, что дальше, какие правила действуют
+- `diary.md` — append-only журнал задач и результатов
+- `INDEX.md` — этот файл, указатель по проекту
+- `cascade.sh` — скрипт каскадного сжатия статьи (L1 → L2 → L3)
+- `data/README.md` — описание каналов, слоёв, единиц и ловушек данных
+- `data/edison_cache/top_fields.npz` — пять сцен с наибольшей ошибкой суррогата, отобраны вручную
+- `checks/check.py` — независимая проверка метрик и кода src/metrics.py
+- `src/metrics.py` — модуль с функцией metrics(obs, pred) → dict
+- `results/metrics.json` — результат расчёта метрик: 16 разрезов, две модели
+- `results/metrics_table.md` — таблица метрик для человека
+- `memory/L1.md` — склейка сжатий семи разделов статьи (по 100–150 слов)
+- `memory/L2.md` — 10 проверяемых тезисов по статье со страницами
+- `memory/L3.md` — главный результат одной фразой до 30 слов
+- `paper/paper.pdf` — статья проекта: срез прежней постановки
+- `paper/paper_layout.txt` — текст статьи с сохранённой вёрсткой; числа из таблиц брать отсюда
+- `paper/sections/` — семь markdown-разделов статьи (abstract … conclusion)
+- `library/` — 35 работ с аннотациями; полный текст в pdf/, извлечённый в text/
+- `src/add_work.py` — добавление новой работы в библиотеку
+- `src/build_library.py` — сборка corpus из аннотаций
+- `src/extract_text.py` — извлечение текста из PDF в library/text/
+- `src/fetch_arxiv.py` — загрузка статей с arXiv
+- `src/fetch_pdfs.py` — скачивание PDF по DOI
+- `src/import_downloads.py` — импорт загруженных файлов в библиотеку
+- `src/link_pdfs.py` — связывание PDF с аннотацией
+- `src/missing_report.py` — отчёт о недостающих PDF

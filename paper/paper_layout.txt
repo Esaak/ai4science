@@ -1,0 +1,568 @@
+                                 Moscow University Physics Bulletin 80(9), x (2026)
+
+
+                       Machine Learning for Environmental Sciences
+
+
+          Stationary pollutant concentration fields in urban layer: deep
+                     learning approximation of large-eddy simulation
+
+        I. A. Gerasimov,1, * M. A. Krinitskiy,1, 2, 3, 4, 5 E. V. Mortikov,3, 4 and A. V. Debolskiy3, 5
+                         1
+                             Moscow Institute of Physics and Technology (National
+                              Research University), Dolgoprudny, 141701 Russia
+    2
+        Shirshov Institute of Oceanology, Russian Academy of Sciences, Moscow, 117997 Russia
+3
+    Research Computing Center, Lomonosov Moscow State University, Moscow, 119991 Russia
+             4
+                 Moscow Center for Fundamental and Applied Mathematics, Moscow, Russia
+                             5
+                                 Obukhov Institute of Atmospheric Physics, Russian
+                                   Academy of Sciences, Moscow, 119017 Russia
+                        (Received xx.xx.2026; Revised xx.xx.2026; Accepted xx.xx.2026)
+
+
+
+
+                                                        x–1
+                                Deep Learning in Computational Physics
+
+
+                                               Abstract
+     Reliable, spatially resolved prediction of pollutant concentration in an urban canopy is expensive
+with Large Eddy Simulation (LES) and out of reach for Gaussian models that ignore the geometry.
+We train a convolutional surrogate neural model that maps a raster description of an idealized, regular
+staggered-block, urban canopy described in building geometry, leaf-area index, road emission sources,
+and wind — onto the steady-state PM2.5 field at four heights and its vertical mean, using data from
+the MSU-RCC LES model. On the test set the surrogate reaches 𝑅2 = 0.86 with FAC2 = 0.75,
+NMSE = 0.44 and low bias (FB = 0.07, mass_ratio = 0.93), satisfying the Chang–Hanna acceptance
+criteria. We demonstrate that the predicted field is governed primarily by the emission sources and
+the vegetation. Also, we demonstrate that the feature-wise Linear Modulation (FiLM) on the wind
+vector, intended to improve the fit, gives no measurable benefit in a controlled ablation study and
+slightly worsens the mass-balance metric. By contrast, data augmentation is shown to be essential.
+We also demonstrate the computational efficiency: the surrogate model runs in about 3.5 ms per city
+configuration.
+
+PACS numbers: 92.60.Sz, 07.05.Mh, 47.27.ep
+
+Keywords: urban dispersion, PM2.5 , large eddy simulation, surrogate model, U-Net, feature attribution, air
+
+quality model evaluation
+
+
+
+
+1.     INTRODUCTION
+
+
+      Air quality is a significant factor of public health, and road traffic is one of the leading con­
+tributors to urban air pollution [1]. A trustworthy spatial estimate of the pollutant distribution
+in a city requires resolving the interaction of the wind flow with the building geometry, including
+street-canyon channelling and recirculation in the wakes of buildings.
+      Numerical approaches to turbulent scalar transport trade accuracy against computational
+cost, with the two well-established families occupying opposite extremes of this trade-off. Large
+Eddy Simulation (LES) resolves the energy-containing eddies responsible for most of the scalar
+transport and is the reference tool for urban-canopy flows [2, 3], but reaching a quasi-stationary
+regime takes wall-clock time that precludes operational analysis or a sweep over many config­
+urations. At the opposite side, semi-empirical Gaussian plume models are cheap but do not
+*
+     E-mail: gerasimov.ia@phystech.edu
+
+
+                                                   x–2
+                       Moscow University Physics Bulletin 80(9), x (2026)
+
+
+account for the building geometry at all. Machine-learning surrogates trained on high-fidelity
+data can approximate the non-linear map from boundary conditions to the dispersion field at
+a cost comparable to analytical models: neural networks have been used to emulate urban
+pollutant dispersion for emergency forecasting [4] and, more generally, convolutional networks
+predict steady flow fields orders of magnitude faster than a Computational Fluid Dynamics
+(CFD) solver [5].
+     Machine-learning surrogates for airflow and dispersion in the built environment have devel­
+oped rapidly; a comprehensive review is given by Calzolari and Liu [6]. Coupled CFD–ML
+models estimate ventilation and pollutant exchange in dense urban settings [7], dedicated emu­
+lators target operational dispersion forecasting for accidental releases [4], and operator-learning
+methods such as the Fourier neural operator approximate the solution map of the governing
+equations directly [8]. Most of these surrogates, however, predict a single near-surface plane
+rather than the vertical structure of the field, fix the emission sources and vary only the inflow,
+and report aggregate error without the physically grounded metrics standard in air-quality
+model evaluation.
+     This work develops a fast surrogate for the steady-state PM2.5 field of an idealized urban
+canopy at several heights and analyses which physical inputs govern its predictions. It differs
+from prior machine-learning surrogates in three respects: the target is multi-level (four heights
+and the vertical mean) rather than a single near-surface plane; the model is evaluated with
+the standard Chang–Hanna dispersion criteria and an explicit mass-balance check, not with
+𝑅2 alone; and a controlled component ablation study quantifies the roles of wind conditioning
+and data augmentation. Two results are established. First, for the present setup the predicted
+field is governed primarily by the emission sources and the vegetation. Second, the ablation
+study establishes that data augmentation is essential to accuracy, whereas the wind-conditioning
+mechanism (Feature-wise Linear Modulation, FiLM) yields no measurable improvement and
+slightly worsens the mass-balance metric.
+
+
+
+2.    DATA
+
+
+     2.1.   Physical problem statement
+
+
+     The reference data are generated with LES of an idealized urban canopy under neutral
+thermal stratification, representative of Moscow conditions (Fig. 1). The domain is 256 ×
+256 × 64 m, discretised on a 128 × 128 × 32 grid (2 m per cell in the horizontal). The building
+
+                                               x–3
+                                Deep Learning in Computational Physics
+
+
+geometry is fixed across the whole dataset: identical blocks of height 16 m in a regular staggered
+array occupying about 6% of the plan area. Vegetation is represented by trees with prescribed
+leaf-area density (LAD) and leaf-area index (LAI); roads are modelled as volumetric PM2.5
+emission sources of height 8 m. The flow is forced by a prescribed horizontal pressure gradient
+that sets the wind; the wind speed is essentially constant across the dataset (varying by <0.5%),
+so only the wind direction and the emission and vegetation layout vary between simulations.
+
+
+
+
+Figure 1. Physical problem: an idealized staggered-block urban canopy (256 × 256 × 64 m) with fixed
+16 m buildings, trees (LAD/LAI), and 8 m road emission sources, forced by a mean wind set by a
+horizontal pressure gradient.
+
+
+
+
+   2.2.   LES model
+
+
+   The data were produced with the LES model developed at the Moscow State University
+Research Computing Center (MSU-RCC) [9–11], which integrates the spatially filtered incom­
+pressible Navier–Stokes equations under the Boussinesq approximation together with a transport
+equation for the passive scalar,
+
+                                      𝜕 𝑢¯𝑖
+                                             = 0,
+                                      𝜕𝑥𝑖
+                           𝜕 𝑢¯𝑖 𝜕(¯𝑢𝑖 𝑢¯𝑗 )      1 𝜕 𝑝¯* 𝜕𝜏𝑖𝑗
+                                 +           = −         −       + 𝑓𝑐 𝜖𝑖𝑗3 𝑢¯𝑗 ,
+                           𝜕𝑡       𝜕𝑥𝑗           𝜌0 𝜕𝑥𝑖   𝜕𝑥𝑗
+                                                    (︂       )︂
+                              𝜕¯𝑐 𝜕(¯𝑢𝑗 𝑐¯)     𝜕        𝜕¯
+                                                          𝑐       𝜕𝜏𝑐𝑗
+                                  +          =        𝐷𝑐        −       + 𝑆𝑐 ,
+                              𝜕𝑡    𝜕𝑥𝑗        𝜕𝑥𝑗       𝜕𝑥𝑗      𝜕𝑥𝑗
+
+                                                   x–4
+                      Moscow University Physics Bulletin 80(9), x (2026)
+
+
+with 𝑢¯𝑖 the filtered velocity, 𝑝¯* the modified kinematic pressure, 𝜏𝑖𝑗 and 𝜏𝑐𝑗 the subgrid stress
+and scalar-flux tensors, 𝑓𝑐 the Coriolis parameter, and 𝑆𝑐 the source term. Subgrid closure
+uses the Smagorinsky model [12] with a dynamic procedure [13, 14] for the coefficients, and the
+buildings enter as solid blocks resolved on the grid.
+
+
+
+
+   2.3.   Input representation and dataset
+
+
+   Each LES run reaches a quasi-stationary state, after which the concentration field is time-av­
+eraged to give the target. The dataset comprises 9 layouts and 2670 simulations (“experiments”),
+each carrying several independently released tracers, for a total of 58566 samples. The input
+for each tracer is a 7 × 128 × 128 raster (Fig. 2): normalised building height; a signed-distance
+function (SDF) map to buildings; the leaf-area index (LAI); the road emission power (below);
+a signed-distance map to roads (source SDF); and two constant planes encoding the wind di­
+rection (cos 𝜑, sin 𝜑). A signed-distance encoding of geometry is a standard, effective input for
+convolutional flow surrogates [5]. Four normalised coordinate planes (coordinate convolution,
+CoordConv [15]) are appended inside the network, and the full wind 3-vector (cos 𝜑, sin 𝜑, |v|) is
+also supplied to the wind-conditioning module (Sec. 3.2). The prediction target has five maps:
+the concentration at 𝑧 = 3, 10, 16, 50 m (levels Z1, Z5, Z8, Z25) and the vertically averaged
+concentration (“Mean”). All concentrations are transformed by log(1 + 𝐶) for training, as they
+span several orders of magnitude.
+
+   The road-emission power is reconstructed from the rasterised road mask: connected segments
+are split into length ℓ and width 𝑤 by morphological opening and assigned a strength ℓ 𝑤2 ℎ𝑠 𝑘𝑒
+(ℎ𝑠 = 8 m, 𝑘𝑒 = 13.06/3.5), passed to the network as log(1 + power). Figure 3 summarises the
+dataset: the mean concentration of the central level, the vegetated area fraction, the log10 of the
+peak source power (bimodal, spanning about two orders of magnitude), and the distribution of
+wind directions.
+
+   The split into training and test sets is by experiment (80/20, fixed seed): all tracers of
+one simulation stay on the same side, giving 46934 training and 11632 test samples. Because
+the geometry is identical everywhere, the layouts are pooled before splitting; the consequences
+for generalisation are discussed in Sec. 5. Spatial augmentation (90∘ rotations and reflections,
+applied consistently to the raster, the target and the wind vector) is used on the training set
+only.
+
+                                               x–5
+                             Deep Learning in Computational Physics
+
+
+
+
+Figure 2. The 7-channel input raster: building height and building SDF, LAI, road emission power
+(log) and road SDF, and two constant planes for the wind direction. The same wind vector is also fed
+to the FiLM module.
+
+
+
+
+Figure 3. Dataset distributions: mean concentration of the central level, vegetated area fraction, log10
+of the peak source power (bimodal), and wind-direction rose.
+
+
+3.    METHOD
+
+
+     3.1.   Network architecture
+
+
+     The surrogate is a U-Net [16] with about 5.1×106 parameters (Fig. 4). The encoder is a stem
+convolution to 64 channels followed by three max-pooling stages to 128, 256 and 512 channels
+
+                                                  x–6
+                      Moscow University Physics Bulletin 80(9), x (2026)
+
+
+(Mish activations). The decoder has three stages, each a transposed convolution, concatenation
+of the encoder skip connection, and a modulated double convolution (convolution, GroupNorm,
+wind modulation, Mish, convolution, GroupNorm, Mish) with 256, 128 and 64 channels. A 1×1
+convolution produces the five output maps. The output is masked geometrically: at each height
+the prediction is zeroed in cells where the building is taller than that level (the “Mean” map is
+left unmasked); the same masking is applied in the metrics so that trivial zeros inside buildings
+do not inflate the scores.
+
+
+
+
+Figure 4. Architecture: a U-Net with a 64–128–256–512 encoder and skip connections. The global
+wind vector is embedded by an MLP and injected into every decoder level through FiLM (𝛾, 𝛽).
+
+
+
+
+   3.2.   Wind conditioning via FiLM
+
+
+   To test whether an explicit, strict dependence on wind improves the fit, the decoder is
+conditioned on the global wind vector through Feature-wise Linear Modulation (FiLM) [17].
+The wind 3-vector is embedded by a two-layer MLP (3 → 128 → 512) and, at each decoder
+level ℓ, a linear projection yields a per-channel scale 𝛾ℓ and shift 𝛽ℓ ; the feature map after the
+first convolution and normalisation is modulated as
+
+                                 FiLM(hℓ ) = (1 + 𝛾ℓ ) ⊙ hℓ + 𝛽ℓ .
+
+Disabling the conditioning (“no FiLM”, used in the ablation study) forces 𝛾ℓ = 𝛽ℓ = 0. Whether
+this mechanism actually helps is tested in Sec. 4.3.
+
+                                               x–7
+                             Deep Learning in Computational Physics
+
+
+   3.3.   Loss function
+
+
+   All quantities are compared in log space, 𝑦ˆ = log(1 + ˆ
+                                                         𝐶), 𝑦 = log(1 + 𝐶). The loss combines a
+plume-weighted mean square error, a plume-weighted mean absolute error, and an unweighted
+anchor term,
+                   𝐿 = MSE𝑤 + 𝜆1 MAE𝑤 + 𝜆2 MSE,           𝜆1 = 0.05, 𝜆2 = 1.0,
+
+with per-pixel weights capped and normalised per scene,
+                               (︀                )︀
+                            min exp(𝛽𝑦), 𝑐max
+                    𝑤 = ⟨︀                    ⟩︀     , 𝛽 = 1, 𝑐max = 50.
+                           min(exp(𝛽𝑦), 𝑐max ) scene
+
+The weighted terms focus the model on the plume; the anchor term counteracts background
+overestimation.
+
+
+   3.4.   Evaluation metrics
+
+
+   Quality is assessed with the air-quality metrics of Chang and Hanna [18], computed in physical
+space (after exp(·)−1) with building interiors excluded. With 𝐶𝑜 the LES and 𝐶𝑝 the prediction
+and ⟨·⟩ a spatial average,
+
+                             2 (⟨𝐶𝑜 ⟩ − ⟨𝐶𝑝 ⟩)             ⟨(𝐶𝑜 − 𝐶𝑝 )2 ⟩
+                          FB =                 , NMSE =                   ,
+                               ⟨𝐶𝑜 ⟩ + ⟨𝐶𝑝 ⟩                 ⟨𝐶𝑜 ⟩ ⟨𝐶𝑝 ⟩
+                      FAC2 = fraction of cells with 0.5 ≤ 𝐶𝑝 /𝐶𝑜 ≤ 2.0,
+
+together with 𝑅2 = 1 − ⟨(𝐶𝑝 − 𝐶𝑜 )2 ⟩/Var(𝐶𝑜 ), the RMSE, the MAE, and the mass ratio
+              ∑︀     ∑︀
+mass_ratio =     𝐶𝑝 / 𝐶𝑜 , a diagnostic of the surrogate (ideal value one) rather than a con­
+straint enforced during training. A model is acceptable when FAC2 ≥ 0.5 and NMSE ≤ 1.5
+with small |FB|.
+
+
+   3.5.   Baselines and training
+
+
+   Two geometry-agnostic baselines are used: a mean-field baseline (the training-set average
+field, per pixel and level) and a nearest-wind baseline (the target of the training sample whose
+wind vector is closest). Models are trained with AdamW (learning rate 10−5 , batch size 256)
+and a ReduceLROnPlateau schedule (factor 0.5, patience 5); each epoch takes about 200 s. Two
+checkpoints are kept, one at minimum validation loss and one at maximum validation 𝑅2 ; the
+plume-weighted loss and 𝑅2 anti-correlate late in training, so the reported production model is
+the best-𝑅2 checkpoint, obtained by fine-tuning a converged model for a further 100 epochs.
+
+                                               x–8
+                           Moscow University Physics Bulletin 80(9), x (2026)
+
+
+4.    RESULTS
+
+
+     4.1.   Predictive accuracy
+
+
+     Table 1 reports the production model in physical space, per level and overall. Accuracy is
+high (𝑅2 = 0.86, FAC2 = 0.75, NMSE = 0.44, FB = 0.07, aggregate mass_ratio = 0.93) and
+satisfies the Chang–Hanna criteria; it is fairly uniform with height, best at the vertical-mean
+output (𝑅2 = 0.88).
+
+Table 1. Production surrogate, physical space, buildings excluded, over the test set. RMSE and MAE
+are in 𝜇g/m3 .
+
+                 Level            Height, m    𝑅2     RMSE MAE      FB    FAC2 NMSE
+
+                 Z1                   3       0.833    3116   1078 0.069 0.751    0.503
+
+                 Z5                   10      0.867    2297   810   0.077 0.750   0.390
+
+                 Z8                   16      0.876    2015   679   0.062 0.744   0.372
+
+                 Z25                  50      0.866    1768   511   0.093 0.712   0.471
+
+                 Mean (output)        —       0.881    1863   579   0.072 0.771   0.367
+
+                 Overall              —       0.862    2256   728   0.074 0.746   0.442
+
+
+
+
+     4.2.   Baselines
+
+
+     Both geometry-agnostic baselines have negative 𝑅2 and FAC2 < 0.2 (mean-field 𝑅2 = −0.31,
+FAC2 = 0.19; nearest-wind 𝑅2 = −0.72, FAC2 = 0.15), i.e. they are worse than predicting the
+mean, so the surrogate’s skill comes from resolving the source and vegetation layout, not from
+the marginal statistics of the field or from the wind alone.
+
+
+     4.3.   Ablation study
+
+
+     In an ablation study — disabling one component at a time to measure its contribution —
+Table 2 compares, at convergence and under a matched protocol (from scratch, 200 epochs,
+best-loss checkpoint), the full model against the same network without FiLM and without
+augmentation. Two results stand out. Removing the augmentation is clearly harmful (every
+
+                                                      x–9
+                              Deep Learning in Computational Physics
+
+
+physical metric degrades: 𝑅2 0.798 → 0.737, mass_ratio 0.865 → 0.832), so the augmentation
+is an essential ingredient. Removing FiLM, by contrast, does not hurt — it improves every
+physical metric (higher 𝑅2 , lower FB and NMSE, and markedly better mass conservation,
+mass_ratio = 0.928). In log space all three variants are nearly identical (log-𝑅2 0.896, 0.900,
+0.888): the differences appear only in the physical mass and bias, which the log-space loss does
+not directly control. We conclude that, in this regime, wind conditioning gives no measurable
+benefit and slightly worsens the mass-balance metric (mass_ratio farther from one), whereas
+augmentation is required.
+   We report the FiLM model as the production system because it is best checkpoint under the
+best-𝑅2 , fine-tuned protocol (Table 1); the ablation study is internally consistent (all variants
+from scratch, best-loss) but uses a different selection protocol, so its absolute level is below
+the production number and the two should not be compared directly. We can not claim the
+production model would be worse without FiLM.
+
+
+Table 2. Ablation at convergence (200 epochs, matched protocol, physical space, over the test set).
+Best value per column in bold.
+
+          Variant                         𝑅2     RMSE MAE        FB     NMSE mass_ratio
+
+          Full (FiLM + aug)              0.798    2729   1013   0.145   0.694    0.865
+
+          Without FiLM (aug)             0.822    2561   997    0.075 0.570      0.928
+
+          Without augmentation (FiLM) 0.737       3110   1224   0.183   0.937    0.832
+
+
+
+
+   4.4.   Governing inputs
+
+
+   For the problem setup considered here, the predicted field is determined chiefly by the emis­
+sion input — the location and magnitude of the sources — and by the vegetation (LAI), which
+redistributes and removes the scalar; the fixed building geometry and the single-speed wind
+direction play a secondary role. This ordering is consistent with the ablation study of Sec. 4.3,
+in which removing the explicit wind conditioning leaves accuracy essentially unchanged, and
+with the dataset design, in which the source and vegetation layouts are the primary degrees
+of freedom. We emphasise that it is specific to the present regime (fixed geometry, fixed wind
+speed) and is not a general statement about the relative importance of these inputs.
+
+                                                 x–10
+                       Moscow University Physics Bulletin 80(9), x (2026)
+
+
+   4.5.   Physical validity
+
+
+   Across three different test scenes, the predicted fields place the plume correctly but smear
+its fine structure (Fig. 5), and the parity plot (Fig. 6) shows a background floor near 𝐶 ≈ 0 and
+under-prediction of the highest concentrations — the signature of a log-space MSE objective.
+Mass is well calibrated in the median (Fig. 7); a small subset of scenes (1.5% of the test set,
+with mass_ratio < 0.1) forms a separate cluster near mass_ratio ≈ 0.05 and FB ≈ 1.6, i.e. the
+surrogate predicts a near-zero field where the LES contains a strong plume.
+
+
+
+
+Figure 5. Three different test scenes (one per row): building footprint, LES concentration (level Z1),
+surrogate prediction, and absolute error. The plume location is captured; fine structure is smeared.
+Colour bars: concentration in 𝜇g/m3 (shared scale for LES and prediction) and absolute error.
+
+
+
+
+                                                x–11
+                              Deep Learning in Computational Physics
+
+
+
+
+Figure 6. Parity plot (log space): the prediction tracks the LES over the full range, with a background
+floor at 𝐶 ≈ 0 and under-prediction of the largest values. Colour indicates point density (log scale).
+
+
+
+
+Figure 7. Distributions of the mass ratio (median 0.97) and fractional bias (median 0.04). A minority
+of scenes cluster near zero mass ratio (missed plume).
+
+
+   4.6.   Computational cost
+
+
+   The surrogate evaluates one scene in about 3.5 ms on an NVIDIA Tesla V100-DGXS-32GB
+GPU (∼284 scenes/s). For reference, one LES run on the same GPU takes about 20 min for a
+single-tracer configuration and about 30 min when 16 tracers are released simultaneously, the
+flow solve dominating the cost. Per delivered concentration field this is ≈ 1.2 × 103 s (single
+tracer) or ≈ 1.1 × 102 s (amortised over 16 tracers), so the surrogate is faster by four to five
+
+                                                  x–12
+                       Moscow University Physics Bulletin 80(9), x (2026)
+
+
+orders of magnitude. As both costs are measured on the same GPU, the comparison is on
+identical hardware and reflects end-to-end wall-clock time to a stationary field.
+
+
+
+
+5.    DISCUSSION AND LIMITATIONS
+
+
+     Three limitations shape the interpretation. First, the objective is the main weakness: it is
+a log-space error, whereas the quantities of interest (mass, bias) are physical. The features the
+model handles worst — peak magnitude and physical mass, and the very quantities in which the
+ablation variants differ — are exactly those the log loss does not constrain. Rebuilding the loss
+on a physical concentration normalisation (a mass-consistent term, or training partly in physical
+space) is the natural next step. Second, the geometry and wind speed are fixed: generalisation
+to unseen building morphologies or wind speeds is out of scope, and the marginal role of the
+wind conditioning is a property of this regime, not a general statement about FiLM. Because
+the layouts share a common geometry, the test set does not probe geometric generalisation;
+the meaningful axis here would be held-out source and vegetation configurations, which are the
+dominant predictors. Third, the emission-power channel is reconstructed from a raster and is
+fragile for non-axis-aligned roads.
+
+     Finally, we note the practical finding that a plume-weighted loss and 𝑅2 anti-correlate late
+in training, so checkpoint selection must be stated explicitly.
+
+
+
+
+6.    CONCLUSION
+
+
+     In this study, we presented the fast convolutional surrogate neural model for the steady-state
+PM2.5 field of an idealized urban canopy that satisfies standard dispersion-model acceptance cri­
+teria (𝑅2 = 0.86, FAC2 = 0.75, NMSE = 0.44). We demonstrate that the predicted PM2.5 field
+is governed primarily by the emission sources and vegetation configuration. Also, a controlled
+ablation study shows that data augmentation is essential whereas explicit wind conditioning
+(FiLM) gives no measurable benefit in prediction quality and slightly worsens the mass-balance
+metric. We intend to explore the alternative options for loss formulations since we see the
+log-space loss being the main limitation in the current problem formulation.
+
+                                                x–13
+                                Deep Learning in Computational Physics
+
+
+   FUNDING
+
+
+   This research was carried out under governmental assignment by Ministry of Science and
+Higher Education of the Russian Federation No. 075-03-2026-305 dated January 16, 2026.
+
+
+
+
+   CONFLICT OF INTEREST
+
+
+   The authors declare that they have no conflicts of interest.
+
+
+
+
+ [1] K.-M. Wai and P. K. N. Yu, Int. J. Environ. Res. Public Health 20, 2412 (2023).
+     https://doi.org/10.3390/ijerph20032412
+ [2] J. W. Deardorff, J. Atmos. Sci. 29, 91–115 (1972). https://doi.org/10.1175/1520-0469(1972)029<0091:NIONA
+ [3] C.-H. Moeng, J. Atmos. Sci. 41, 2052–2062 (1984). https://doi.org/10.1175/1520-0469(1984)041<2052:ALESM
+ [4] M. Mendil, S. Leirens, P. Armand, and C. Duchenne, Environ. Model. Softw. 152, 105387 (2022).
+     https://doi.org/10.1016/j.envsoft.2022.105387
+ [5] X. Guo, W. Li, and F. Iorio, in Proc. 22nd ACM SIGKDD Int. Conf. on Knowledge Discovery
+     and Data Mining (KDD ’16), pp. 481–490. https://doi.org/10.1145/2939672.2939738
+ [6] G.    Calzolari      and      W.     Liu,       Build.    Environ.      206,        108315   (2021).
+     https://doi.org/10.1016/j.buildenv.2021.108315
+ [7] C.    Ding     and     K.      P.    Lam,        Build.    Environ.         165,    106394   (2019).
+     https://doi.org/10.1016/j.buildenv.2019.106394
+ [8] Z. Li, N. Kovachki, K. Azizzadenesheli, B. Liu, K. Bhattacharya, A. Stuart, and A. Anandkumar,
+     in International Conference on Learning Representations (ICLR 2021), arXiv:2010.08895.
+ [9] A. V. Glazunov, Ü. Rannik, V. M. Stepanenko, V. N. Lykosov, et al., Geosci. Model Dev. 9,
+     2925–2949 (2016). https://doi.org/10.5194/gmd-9-2925-2016
+[10] E. V. Mortikov, A. V. Glazunov, and V. N. Lykosov, Russ. J. Numer. Anal. Math. Modelling 34,
+     119–132 (2019). https://doi.org/10.1515/rnam-2019-0010
+[11] A. V. Debolskiy, V. M. Stepanenko, A. V. Glazunov, and S. S. Zilitinkevich, Izvestiya, Atmos.
+     Ocean. Phys. 55, 139–151 (2019). https://doi.org/10.1134/S000143381902004X
+[12] J.      Smagorinsky,          Mon.          Weather       Rev.        91,          99–164    (1963).
+     https://doi.org/10.1175/1520-0493(1963)091<0099:GCEWTP>2.3.CO;2
+
+                                                   x–14
+                       Moscow University Physics Bulletin 80(9), x (2026)
+
+
+[13] M. Germano, U. Piomelli, P. Moin, and W. H. Cabot, Phys. Fluids A 3, 1760–1765 (1991).
+     https://doi.org/10.1063/1.857955
+[14] D. K. Lilly, Phys. Fluids A 4, 633–635 (1992). https://doi.org/10.1063/1.858280
+[15] R. Liu, J. Lehman, P. Molino, F. P. Such, E. Frank, A. Sergeev, and J. Yosinski, in Advances in
+     Neural Information Processing Systems 31 (NeurIPS 2018), pp. 9628–9639. arXiv:1807.03247.
+[16] O. Ronneberger, P. Fischer, and T. Brox, in Medical Image Computing and Computer-Assisted
+     Intervention (MICCAI 2015), pp. 234–241. https://doi.org/10.1007/978-3-319-24574-4_28
+[17] E. Perez, F. Strub, H. de Vries, V. Dumoulin, and A. Courville, Proc. AAAI Conf. Artif. Intell.
+     32, 3942–3951 (2018). https://doi.org/10.1609/aaai.v32i1.11671
+[18] J.   C.   Chang   and   S.   R.    Hanna,   Meteorol.   Atmos.   Phys.   87,   167–196   (2004).
+     https://doi.org/10.1007/s00703-003-0070-7
+
+
+
+
+                                                 x–15
+
