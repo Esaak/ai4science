@@ -1,0 +1,13 @@
+---
+type: ЗапросКГрафу
+source: OpenAlex
+retrieved: 2026-10-20
+---
+# Запрос 2026-10-20 Air quality model performance evaluation
+
+Инструмент и аргументы: openalex_work(work="doi:10.1007/s00703-003-0070-7")
+Найдено: 1; отобрано в проект: 1 — добавлен как источник
+
+## Связи
+- тип: [[ЗапросКГрафу]]
+- решает: [[Air quality model performance evaluation]]
