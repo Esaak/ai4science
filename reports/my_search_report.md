@@ -1,3 +1,6 @@
+---
+type: Отчёт
+---
 # Поиск по своей библиотеке: neural network surrogate for LES of PM2.5 dispersion in an urban street canyon
 
 [источник] Библиотека проекта: `library/corpus.jsonl`, 37 работ, происхождение — OpenAlex REST API, дата обращения 2026-10-18 (`library/corpus_provenance.json`). Индексируются название и аннотация, словарь 2056 слов, в документе в среднем 155 слов. BM25 k1=1.2, b=0.75; векторный поиск — intfloat/multilingual-e5-small. Расчёт 2026-10-20, ноутбук `search_lab_pm25.ipynb`, раздел 14.

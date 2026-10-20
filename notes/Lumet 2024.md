@@ -14,4 +14,5 @@ Uncertainty-aware surrogate modeling for urban air pollutant dispersion predicti
 - тип: [[Источник]]
 - хранитсяВ: [[library/pdf/lumet_2024_W4404452021.pdf]]
 - найденЗапросом: [[Запрос 2026-10-20 Uncertainty-aware surrogate modeling]]
+- написан: [[Eliott Lumet]]
 

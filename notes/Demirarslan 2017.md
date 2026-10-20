@@ -14,4 +14,5 @@ Evaluation of three pollutant dispersion models for the environmental assessment
 - тип: [[Источник]]
 - хранитсяВ: [[library/pdf/anon_2017_W2996962897.pdf]]
 - найденЗапросом: [[Запрос 2026-10-20 Evaluation of three pollutant dispersion models]]
+- написан: [[A. Demirarslan]]
 
