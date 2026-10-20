@@ -11,6 +11,10 @@ oa_status: closed
 [источник] Joseph Chang, Steven R. Hanna, "Air quality model performance evaluation", Meteorology and Atmospheric Physics, vol. 87, 2004.
 [источник] Аннотация: 
 [порождено] Зачем проекту: определение метрик качества (FAC2, NMSE, FB) для оценки суррогатных моделей.
+[написано] Расхождение: у издателя авторы стоят инициалами — J. C. Chang, S. R. Hanna, —
+и указан выпуск 1–3, которого OpenAlex не вернул; страниц нет ни в OpenAlex, ни в
+метаданных Crossref. Цитирований: 1154 по OpenAlex против 827 по Crossref
+(сверка 2026-10-21).
 
 ## Связи
 - тип: [[Источник]]

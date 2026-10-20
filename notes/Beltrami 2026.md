@@ -11,9 +11,19 @@ oa_status: hybrid
 [источник] Gabriel Moreira Beltrami, Joan Calafell, Rogério Gonçalves dos Santos, Jan Mateu Armengol, "Assessment of deep-learning strategies for surrogate modeling of pollution dispersion in a thermal street canyon", Computers & Fluids, 2026.
 [источник] Аннотация: This work assesses deep-learning strategies for surrogate modeling of pollution dispersion in a thermal street canyon, comparing CNN, LSTM, and transformer architectures trained on CFD data.
 [порождено] Зачем проекту: оценка DL-стратегий для суррогатного моделирования рассеяния примеси в тепловом стрит-каньоне — прямо по теме суррогатов LES в городской застройке.
-[источник] OpenAlex ID: W4414241068 (journal), W7139074309 (Zenodo preprint)
-[источник] DOI: 10.1016/j.compfluid.2026.107224 (journal), 10.5281/zenodo.19091320 (Zenodo)
-Расхождение: у записи W7139074309 год 2025 и название «Dataset and Surrogate models based on 2D RANS thermal street canyon pollutant dispersion» (Zenodo), у W4414241068 год 2026 и название «Assessment of deep-learning strategies for surrogate modeling of pollution dispersion in a thermal street canyon» (Computers & Fluids) — это одна и та же работа в разных версиях.
+[источник] OpenAlex: W4414241068 — статья, DOI 10.1016/j.compfluid.2026.107224;
+W7139074309 — набор данных на Zenodo, DOI 10.5281/zenodo.19091320, тип `dataset`.
+[написано] Расхождение, сверка 2026-10-21: W7139074309 — **не другая версия этой статьи**,
+а набор данных и обученные суррогаты к ней; в описании набора прямо стоит ссылка на эту
+статью. Прежняя запись в этой заметке называла их одной работой — неверно. У набора
+OpenAlex даёт дату 2025-09-01, страница Zenodo — версию v1 от 18 марта 2026.
+[написано] Расхождение: второй автор у издателя — Joan Calafell Sandiumenge, в OpenAlex и
+на Zenodo фамилия урезана до «Calafell». Выходные данные статьи: Computers & Fluids,
+том 319, статья 107224, октябрь 2026 (метаданные Crossref).
+[написано] Файл `library/pdf/beltrami_2025_W7139074309.pdf` назван по записи набора
+данных, но по содержанию это сама статья: первая страница — шапка ScienceDirect,
+Computers and Fluids. Переименование файла отложено: на него ссылается запись
+`library/beltrami_2025_W7139074309.md`.
 
 ## Связи
 - тип: [[Источник]]
