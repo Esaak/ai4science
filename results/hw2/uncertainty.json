@@ -1,0 +1,94 @@
+{
+  "model": "combined_family_ft_best",
+  "description": {
+    "note": "post-hoc descriptive + pairwise bootstrap, not preregistered",
+    "csv_file": "results/hw2/hw2_results.csv",
+    "csv_sha256": "0f4d665d29026eadc690d493d204636c60288c19841aad19a5e199d6556d587a",
+    "n_situations": 25,
+    "geometry_id_range": [
+      150,
+      174
+    ],
+    "desc_cur": {
+      "n": 25,
+      "mean": 13.126136,
+      "median": 8.04458,
+      "std": 12.327926,
+      "min": 2.366247,
+      "Q1": 4.493988,
+      "Q3": 14.565322,
+      "max": 55.447557,
+      "count_le20": 21
+    },
+    "desc_baseline": {
+      "n": 25,
+      "mean": 12.737555,
+      "median": 8.013102,
+      "std": 11.954588,
+      "min": 1.465525,
+      "Q1": 4.690094,
+      "Q3": 16.171077,
+      "max": 50.602408,
+      "count_le20": 20
+    },
+    "mean_diff_baseline_minus_cur": -0.388581
+  },
+  "bootstrap": {
+    "method": "percentile CI [2.5%..97.5%]",
+    "n_resamples": 10000,
+    "sign": "mean_diff = baseline - cur, positive = cur better",
+    "numpy_version": "2.5.4",
+    "seeds": [
+      20261115,
+      20261116,
+      20261117
+    ],
+    "results": [
+      {
+        "seed": 20261115,
+        "median_cur_ci": [
+          6.107795,
+          13.545046
+        ],
+        "frac_le20_ci": [
+          0.68,
+          0.96
+        ],
+        "mean_diff_ci": [
+          -2.13407,
+          1.617206
+        ]
+      },
+      {
+        "seed": 20261116,
+        "median_cur_ci": [
+          6.107795,
+          13.545046
+        ],
+        "frac_le20_ci": [
+          0.68,
+          0.96
+        ],
+        "mean_diff_ci": [
+          -2.14532,
+          1.610845
+        ]
+      },
+      {
+        "seed": 20261117,
+        "median_cur_ci": [
+          6.107795,
+          13.545046
+        ],
+        "frac_le20_ci": [
+          0.68,
+          0.96
+        ],
+        "mean_diff_ci": [
+          -2.187819,
+          1.623692
+        ]
+      }
+    ]
+  }
+}
