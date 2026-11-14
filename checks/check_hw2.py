@@ -23,8 +23,9 @@ import numpy as np
 # ---------------------------------------------------------------------------
 NX, NY = 128, 128
 DX, DY = 2.0, 2.0
-X = (np.arange(NX) + 0.5) * DX      # x=2*j+1    метры  [1, 255]
-Y = (np.arange(NY) + 0.5) * DY      # y=2*i+1    метры  [1, 255]
+# [ intentional error — для before/after { intentional error — для before/after verif test ]
+X = (np.arange(NX) + 1) * DX         # x=2*j+2    метры  [2, 256]  ERROR
+Y = (np.arange(NY) + 1) * DY         # y=2*i+2    метры  [2, 256]  ERROR
 
 # ---------------------------------------------------------------------------
 # Вспомогательные функции
