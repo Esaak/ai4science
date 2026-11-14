@@ -1,0 +1,45 @@
+# Clean clone verifikator — ДЗ2 hw2-work
+
+**Дата:** 2026-11-14 21:07 MSK
+**Каталог клона:** `/private/tmp/clean_hw2_20261114_210716`
+**Источник клона:** `file:///Users/icnul/my_folder/shad/pm25_surrogate` (локальный)
+**Ветка:** `hw2-work` (single-branch clone)
+**.gitignore:** НЕ клонирован (uncommitted)
+
+## Версии
+
+```
+Python: 3.14.4
+NumPy:  2.5.4
+```
+
+## Команда запуска
+
+```bash
+.venv/bin/python checks/check_hw2.py
+```
+
+## Результат
+
+- Код выхода: **0**
+- Синтетические тесты: **7/7 OK**
+- Архив SHA-256: `79808ff2af94573e891754b5f52b8578afff9519788a2611d52d5bce7f3cab3c`
+- `median_error_current_m = 8.0446 м` (требуемый ≈ 8.0446) ✓
+- `count_error_le20_current = 21` (требуемый ≥ 20) ✓
+- Условие 1 (медиана ≤ 10): **ДА**
+- Условие 2 (≥ 20 из 25): **ДА**
+- Вердикт: **✓ ПРИНЯТА**
+
+## Сверка с after.txt
+
+Совпадение по всем числовым полям, SHA-256 архива, медиане, счётчику, вердикту и коду выхода — **ПОЛНОЕ**.
+
+## Git
+
+```
+0fd67be до2: before/after verif test — before=код1(test_mask FAIL), after=код0(ПРИНЯТА)
+```
+
+## Вывод полный
+
+См. секцию «Результат» выше — stdout `.venv/bin/python checks/check_hw2.py` из чистого клона.
