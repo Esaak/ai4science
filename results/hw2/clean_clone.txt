@@ -4,7 +4,7 @@
 **Каталог клона:** `/private/tmp/clean_hw2_20261114_210716`
 **Источник клона:** `file:///Users/icnul/my_folder/shad/pm25_surrogate` (локальный)
 **Ветка:** `hw2-work` (single-branch clone)
-**.gitignore:** НЕ клонирован (uncommitted)
+**.gitignore:** отслеживаемый файл в клоне есть; не попала его старая незакоммиченная правка
 
 ## Версии
 
