@@ -194,7 +194,14 @@ def test_width_shift_invariance():
     c2[3 + 3, 14 + 4] = 1.0  # x=37, y=13
     center2 = compute_concentration_center(c2)
     w2 = compute_radial_width(c2, center2)
-    ok(f"test_width_shift_invariance (shifted +3row,+4col): W2={w2:.6f} m (exp 10.0), center2={center2}")
+    if abs(w2 - 10.0) < 1e-6:
+        ok(f"test_width_shift_invariance (shifted): W2={w2:.6f} m (exp 10.0)")
+    else:
+        fail(f"test_width_shift_invariance: W2={w2:.6f} != 10.0 shifted", code=1)
+    if abs(center2[0] - 27.0) < 1e-6 and abs(center2[1] - 13.0) < 1e-6:
+        ok(f"test_width_shift_invariance: center2={center2} OK")
+    else:
+        fail(f"test_width_shift_invariance: center2={center2} != (27.0,13.0)", code=1)
 
 
 SYNTHETICS = [
