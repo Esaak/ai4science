@@ -7,6 +7,14 @@
 | 1 | `.venv/bin/python checks/check_hw2.py --synthetic` | 1 | `test_mask` упал: ошибка в логике сравнения переменных |
 | 2 | `.venv/bin/python checks/check_hw2.py --synthetic` | 0 | Все 6 тестов пройдены |
 
+## Попытка 2 (2026-11-14)
+
+| # | Команда | Код возврата | Результат |
+|---|---|---|---|
+| 1 | `.venv/bin/python checks/check_hw2.py --synthetic` | 0 | Все 6 синтетических тестов пройдены |
+
+Изменения: 1) удалена заглушка `build_layer_valid_masks`; 2) координаты ячеек `x=2*j+1, y=2*i+1` (`indexing="xy"`, сети `+1`); 3) `numpy==2.5.4`.
+
 Исправление: в `test_mask` была логическая ошибка — переменная `center_without` не использовалась,
 но использовалась для проверки `c * ~mask`. Исправлено: тест теперь корректно сравнивает
 `compute_area_integral(c, mask)` vs `compute_area_integral(c, None)`.

@@ -17,34 +17,12 @@ import numpy as np
 # ---------------------------------------------------------------------------
 NX, NY = 128, 128          # число ячеек
 DX, DY = 2.0, 2.0           # размер ячейки, м
-X = np.arange(NX) * DX      # координаты центров ячеек по X
-Y = np.arange(NY) * DY      # координаты центров ячеек по Y
+X = (np.arange(NX) + 1) * DX      # координаты центров ячеек по X, x=2*j+1
+Y = (np.arange(NY) + 1) * DY      # координаты центров ячеек по Y, y=2*i+1
 
 # ---------------------------------------------------------------------------
 # Вспомогательные функции
 # ---------------------------------------------------------------------------
-
-def build_layer_valid_masks(
-    les: np.ndarray,
-    pred: np.ndarray,
-    baseline: np.ndarray | None = None,
-) -> np.ndarray:
-    """
-    Штатная маска валидных ячеек Z1.
-    Принимает поля концентрации (128, 128) и возвращает масшт (128, 128) типа bool.
-
-    ПРАКТИЧЕСКИЙ КОМПАКТ: в рамках ДЗ2 маска определяется высотой зданий
-    и одинакова для LES и предсказаний. Заглушка — маска из `isValid`:
-    True везде, где максимальная концентрация среди всех трёх полей > 0.
-    Если будет необходимость — заменить на полную реализацию.
-    """
-    if baseline is not None:
-        together = np.maximum(np.maximum(les, pred), baseline)
-    else:
-        together = np.maximum(les, pred)
-    # Простая заглушка: all valid where any concentration > 0
-    return together > 0
-
 
 # ---------------------------------------------------------------------------
 # Основные функции
@@ -76,8 +54,8 @@ def compute_concentration_center(c: np.ndarray, mask: np.ndarray | None = None):
             "центр не определён. "
             "Сцена не может быть исключения."
         )
-    # Meshgrid по X, Y
-    Xg, Yg = np.meshgrid(X, Y, indexing="ij")
+    # Meshgrid по X, Y: indexing="xy" → Xg по столбцам, Yg по строкам
+    Xg, Yg = np.meshgrid(X, Y, indexing="xy")
     total = (c * mask).sum()
     x_c = ((c * mask) * Xg).sum() / total
     y_c = ((c * mask) * Yg).sum() / total
@@ -107,7 +85,7 @@ def compute_radial_width(c: np.ndarray, center, mask: np.ndarray | None = None) 
     if mask is None:
         mask = np.ones_like(c, dtype=bool)
     x_c, y_c = center
-    Xg, Yg = np.meshgrid(X, Y, indexing="ij")
+    Xg, Yg = np.meshgrid(X, Y, indexing="xy")
     r2 = (Xg - x_c) ** 2 + (Yg - y_c) ** 2
     total = (c * mask).sum()
     if total == 0.0:
