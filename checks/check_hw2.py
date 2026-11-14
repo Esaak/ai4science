@@ -16,6 +16,7 @@ import sys
 import os
 import json
 import hashlib
+import argparse
 import numpy as np
 
 # ---------------------------------------------------------------------------
@@ -165,6 +166,34 @@ def test_single_cell():
         fail(f"test_single_cell: ({center[0]:.1f},{center[1]:.1f})")
 
 
+def test_width_shift_invariance():
+    """Ширина компактного пятна не меняется при переносе: собственный центр
+    даёт один ответ, смещённый внешний — другой. Поле из двух равных одиночных
+    ячеек с известной шириной и его сдвиг."""
+    # Два равных одиночных пика на расстоянии 20 м друг от друга (10 ячеек)
+    c = np.zeros((NX, NY))
+    c[3, 4] = 1.0   # x=9, y=7    (первая ячейка: arange[4]+.5)*2 = 9, (arange[3]+.5)*2 = 7
+    c[3, 14] = 1.0  # x=29, y=7  (аранж[14]+.5)*2 = 29, (аранж[3]+.5)*2 = 7
+    # Собственный центр: симметрично посередине → (19, 7)
+    center = compute_concentration_center(c)
+    # Ширина должна быть половина расстояния: 10 м (каждый пик на 10 м от центра)
+    w = compute_radial_width(c, center)
+    # Проверка: два одинаковых пика на расстоянии r от центра → W = r = 10.0
+    if abs(w - 10.0) < 1e-6:
+        ok(f"test_width_shift_invariance: W={w:.6f} м (ожид 10.0) при собственном центре")
+    else:
+        fail(f"test_width_shift_invariance: W={w:.6f} != 10.0 при собственном центре")
+    # Теперь вычислим ширину со смещённым центром (на 5 м дальше):
+    center_shifted = (24.0, 7.0)  # сдвинут на 5 м от истинного центра (19,7)
+    w_shifted = compute_radial_width(c, center_shifted)
+    # При смещении на 5 м: расстояния становятся 15 и 5 → sqrt((225+25)/2) = sqrt(125) ≈ 11.18
+    expected_w_shifted = np.sqrt(125.0)
+    if abs(w_shifted - expected_w_shifted) < 1e-6:
+        ok(f"test_width_shift_invariance: W_смещ={w_shifted:.6f} при внешнем центра (ожид {expected_w_shifted:.6f})")
+    else:
+        fail(f"test_width_shift_invariance: W_смещ={w_shifted:.6f} != {expected_w_shifted:.6f}")
+
+
 SYNTHETICS = [
     ("test_additivity", test_additivity),
     ("test_scale_invariance", test_scale_invariance),
@@ -173,6 +202,7 @@ SYNTHETICS = [
     ("test_rotation", test_rotation),
     ("test_zero_field", test_zero_field),
     ("test_single_cell", test_single_cell),
+    ("test_width_shift_invariance", test_width_shift_invariance),
 ]
 
 # ===========================================================================
@@ -238,15 +268,26 @@ def verify_archive(archive: str, manifest_path: str):
         fail(f"valid: shape {d['valid'].shape} dtype {d['valid'].dtype}", code=1)
     ok("valid bool (25,4,128,128) OK")
 
-    # Маска в Z1 одинакова для трёх полей — блокируем свист для всех
+    # Хотя бы одна допустимая ячейка Z1 в каждой сцене
     for i in range(25):
-        mask_les = d["valid"][i, 0, :, :]
-        mask_cur = d["valid"][i, 0, :, :]
-        if not np.array_equal(mask_les, mask_cur):
-            # Это техническое предупреждение, но стоп-ошибка не нужна:
-            # mask одинаковая, т.к. один источник.
-            pass
-    ok("масса сцен/полей OK")
+        n_valid = int(d["valid"][i, 0, :, :].sum())
+        if n_valid == 0:
+            fail(f"valid: 0 допустимых ячеек Z1, сцена {d['geometry_id'][i]}", code=1)
+    ok("≥1 допустимая ячейка Z1 в каждой сцене OK")
+
+    # Нулевые суммы по valid (проверка согласованности)
+    for field in ("les", "current", "baseline"):
+        arr = d[field].astype(np.float64)
+        for i in range(25):
+            mask = d["valid"][i, 0, :, :]
+            s = (arr[i, 0, :, :] * mask).sum()
+            if s == 0.0:
+                fail(f"{field}: нулевая сумма по valid в Z1, сцена {d['geometry_id'][i]}", code=1)
+    ok("суммы по valid > 0 во всех сценах OK")
+
+    # Общая маска valid (25,4,128,128) применяется к полям по построению;
+    # происхождение маски — метаданные экспорта.
+    # SHA-256 подтверждает целостность архивa, а не истинность метаданных.
 
     # Не закрываем — compute_all_metrics ещё читает
     return d
@@ -305,13 +346,20 @@ def compute_all_metrics(d, out_dir: str):
         c_les = d["les"][i, 0, :, :]
         c_cur = d["current"][i, 0, :, :]
         c_base = d["baseline"][i, 0, :, :]
-        center_les = compute_concentration_center(c_les, mask)
         try:
-            widths_cur[i] = compute_radial_width(c_cur, center_les, mask)
+            center_cur = compute_concentration_center(c_cur, mask)
+        except ValueError:
+            center_cur = None
+        try:
+            center_base = compute_concentration_center(c_base, mask)
+        except ValueError:
+            center_base = None
+        try:
+            widths_cur[i] = compute_radial_width(c_cur, center_cur, mask)
         except ValueError:
             widths_cur[i] = float('nan')
         try:
-            widths_base[i] = compute_radial_width(c_base, center_les, mask)
+            widths_base[i] = compute_radial_width(c_base, center_base, mask)
         except ValueError:
             widths_base[i] = float('nan')
         integrals_les[i] = compute_area_integral(c_les, mask)
@@ -374,21 +422,52 @@ def compute_all_metrics(d, out_dir: str):
     return summary, lines, csv_lines
 
 # ===========================================================================
+# CLI парсер
+# ===========================================================================
+
+def build_parser():
+    """Парсер командной строки: три взаимно исключающих режима."""
+    parser = argparse.ArgumentParser(
+        description="ДЗ2 verifikator: метрики центра концентрации, интеграла и ширины шлейфа.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "Режимы (несовместимы): "
+            "--synthetic — только синтетические тесты; "
+            "--dry-run — синтетика + проверка архива без расчёта таблицы; "
+            "без опций — полный расчёт и вердикт."
+        ),
+    )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--synthetic",
+        action="store_true",
+        help="Только синтетические тесты. Не требует архива и manifest. Код 0 при успехе.",
+    )
+    group.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Синтетика + проверка архива/схемы/маски/нулевых сумм. Без расчёта таблицы, без записи результатов.",
+    )
+    return parser
+
+
+# ===========================================================================
 # MAIN
 # ===========================================================================
 
 def main():
+    parser = build_parser()
+    args = parser.parse_args()
+
     archive   = "fixtures/hw2/plumes.npz"
     manifest  = "fixtures/hw2/manifest.json"
     out_dir   = "results/hw2"
-
-    os.makedirs(out_dir, exist_ok=True)
 
     print("=" * 80)
     print("ДЗ2 verifikator: метрики центра концентрации")
     print("=" * 80)
 
-    # -- 1. Синтетика --
+    # -- 1. Синтетика (общий для всех режимов) --
     print("\n--- 1. Синтетические тесты ---")
     failed_synth = []
     for name, fn in SYNTHETICS:
@@ -401,10 +480,20 @@ def main():
         fail(f"Синтетика: провалены {failed_synth}", code=1)
     print(f"\nВсе {len(SYNTHETICS)} синтетических тестов пройдены.\n")
 
-    # -- 2. Архив --
+    # -- --synthetic --
+    if args.synthetic:
+        print("Режим --synthetic: синтетика пройдена, выход.")
+        sys.exit(0)
+
+    # -- 2. Архив (общий для dry-run и полного режима) --
     print("--- 2. Проверка архива ---")
     d = verify_archive(archive, manifest)
     print()
+
+    # -- --dry-run --
+    if args.dry_run:
+        print("Режим --dry-run: архив проверен, выход без расчёта таблицы.")
+        sys.exit(0)
 
     # -- 3. Расчёт ---
     print("--- 3. Расчёт метрик ---")

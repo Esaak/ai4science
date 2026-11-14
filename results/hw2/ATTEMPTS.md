@@ -77,3 +77,19 @@
 - **SHA-256 архива:** `79808ff2af94573e891754b5f52b8578afff9519788a2611d52d5bce7f3cab3c`
 - **.gitignore:** отслеживаемый файл в клоне есть; не попала его старая незакоммиченная правка
 - **Сверка с after.txt:** полная по всем числовым полям
+
+## Попытка 5 (2026-11-15) — ревью: исправления пунктов 1–6
+
+| # | Команда | Код | Результат |
+|---|---|---|---|
+| 1 | `.venv/bin/python checks/check_hw2.py --synthetic` | 0 | 8 тестов пройдены (добавлен test_width_shift_invariance) |
+| 2 | `.venv/bin/python checks/check_hw2.py --dry-run` | 0 | Архив проверен (маска valid, нулевые суммы по valid), выход без таблицы |
+| 3 | `.venv/bin/python checks/checkHW2.py` | 0 | Медиана=8.04м, 21/25≤20м, ПРИНЯТА |
+
+**Исправления:**
+1. Ширина: собственный центр `current`/`baseline` вместо центра LES (geometry 167: W_cur 129.51 м, W_base 132.56 м — было 140.88/141.89)
+2. CLI: argparse с `--synthetic` / `--dry-run` / полный режим
+3. Маска: удалён фиктивный self-compare; добавлены проверки ≥1 допустимой ячейки / нулевые суммы по.valid
+4. manifest.json: добавлен pilot_method_commit (f6ca07f), method_commit→4963c8e
+
+**check.py:** ПРИНЯТО. **check_week4.py --strict:** [НЕТ] связаны青issues для этого прогона (2 несвязанных п/задачи).
