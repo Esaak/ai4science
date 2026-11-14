@@ -10,8 +10,10 @@
 [OK] test_rotation: dx=0.00e+00 dy=0.00e+00
 [OK] test_zero_field: ValueError при Σc=0
 [OK] test_single_cell: (9.0,7.0)
-[OK] test_width_shift_invariance: W=10.000000 м (ожид 10.0) при собственном центре
-[OK] test_width_shift_invariance: W_смещ=11.180340 при внешнем центра (ожид 11.180340)
+[OK] test_width_shift_invariance: W=10.000000 m (exp 10.0) own center
+[OK] test_width_shift_invariance: W_shifted=11.180340 (exp 11.180340)
+[OK] test_width_shift_invariance (shifted): W2=10.000000 m (exp 10.0)
+[OK] test_width_shift_invariance: center2=(27.0, 13.0) OK
 
 Все 8 синтетических тестов пройдены.
 

@@ -104,7 +104,7 @@ def desc_stats(values):
 
 def bootstrap_pair(e_cur, e_base, n_reps, seed):
     """Парный percentile bootstrap [2.5%,97.5%].
-    
+
     Квантили берутся через np.quantile(..., method='linear') — согласованное
     определение, не зависящее от n_reps.
     """

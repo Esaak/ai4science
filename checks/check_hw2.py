@@ -185,7 +185,7 @@ def test_width_shift_invariance():
     w_shifted = compute_radial_width(c, center_shifted)
     expected_w_shifted = np.sqrt(125.0)
     if abs(w_shifted - expected_w_shifted) < 1e-6:
-        ok(f"test_width_shift_invariance: W_shifted={w_shifted:.6f} (exp {expected_w_shifted:.6f})") 
+        ok(f"test_width_shift_invariance: W_shifted={w_shifted:.6f} (exp {expected_w_shifted:.6f})")
     else:
         fail(f"test_width_shift_invariance: W_shifted={w_shifted:.6f} != {expected_w_shifted:.6f}")
     # Real shift: move both peaks by (+3 row, +4 col), check own center width
