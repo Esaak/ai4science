@@ -1,0 +1,52 @@
+{
+  "method_commit": "f6ca07f",
+  "selection": "geometry_id=150..174, dir_k=0, tracer=1; one scene per geometry",
+  "server_project_commit": "b31a34c68bdb461b26d8d0a923f3bb98bb739fff",
+  "python": "3.10.12",
+  "numpy": "1.24.4",
+  "torch": "2.3.0a0+40ec155e58.nv24.03",
+  "checkpoint_sha256": {
+    "current": "6fb46133f37d84a576be3f90ac16edd8e6d5666807f455abf0020195ea7c285d",
+    "baseline": "217d354db607923e0f49a7ea19a2148be82d60655da0dd5642e7306fabe23b2e"
+  },
+  "checkpoint_config_sha256": {
+    "current": "e00289458afa9e6907d810c71cd7ef0438adbf7b6becab92bc1434cb396b1646",
+    "baseline": "0dc6e38549452a5b12852be8a0854331643c603a315eaa9f645f698c55b411d0"
+  },
+  "code_sha256": {
+    "core/config.py": "758730258d0493390be1318f534dd99760f623e5d237ac760e731793a973764d",
+    "core/dataset.py": "44c5a60d6ad8a482fe4695f4c0c98ba058311e6c1ccb4302ed91f77fb5a4b468",
+    "core/metrics_full.py": "8a0c8077adc2f5f4082373d47003bac8f310f4793624b4681227fb958eeda028",
+    "core/model.py": "62f8fc0f28c559663d561a39e8d6b3ded10749b6cf07506cc9a10bf3d1fc177f",
+    "core/source_power.py": "cebc9dc3161dfaf5e6e1e219c27d847150fdbde6baa495ffab903d2370305578",
+    "core/utils.py": "2bbfb433ab945685b827ad50a1dbde386606f1281c0edf71d11d74aa7252dfc8"
+  },
+  "scene_sha256": {
+    "exp_1500__tracer1.npz": "5c5b4529f94adf97dc5e55793bee4d099c524cdbc9527520bffab74575bc1f4f",
+    "exp_1508__tracer1.npz": "9b33f5193350cbe7674ac55fec303d69d3dad7692322b0e770e4db1f8dd6e40d",
+    "exp_1516__tracer1.npz": "d66c8f871ab335369f2df2c69a97a58b09d827301303e678007508f1a6d654a9",
+    "exp_1524__tracer1.npz": "a61468b1b6ac8dab74f40ac2d3f09d87805d2816b52106b56f6e6ee41110d06c",
+    "exp_1532__tracer1.npz": "9e295004accb56da0ab57b0203591e5902fae6e086847274f799e5d99cad118e",
+    "exp_1540__tracer1.npz": "9b4335b4201775ca48eda9b418ea139daba7255bea35c85290446b6f883bb142",
+    "exp_1548__tracer1.npz": "e28ab79154dc362cd236afd8bc71d8e2cdab827cb0f124ec7698e763689a7df7",
+    "exp_1556__tracer1.npz": "bf289f9ab2e4c48afe6de3b0749bb9043833a8309b0a70ef9a9f735b82e21e68",
+    "exp_1564__tracer1.npz": "099381baa6051dfa6d4a00897c29ca4272f2c733676164b1d9d2d8fbe32b46cb",
+    "exp_1572__tracer1.npz": "c1b3fdd193abbd9a1734ddce075151e4415aadb9893c1fcd2bf214630b9884f7",
+    "exp_1580__tracer1.npz": "8426dc6f949a324daddefa76685b60fd59b8d085263a69a5cae20d9feaf4fd3b",
+    "exp_1588__tracer1.npz": "83c4a24855dfe4128a618497ada2712c576f2fc0cd60681786cebe4393f7547b",
+    "exp_1596__tracer1.npz": "15149fc752786b1334083cac8a3d988212afd6ed155ab062b58213791ed279ac",
+    "exp_1604__tracer1.npz": "19d57e66a0b579daa2df9b49fdd064355a9144f006759dfdc5b23ae2a97e6bb1",
+    "exp_1612__tracer1.npz": "8e0d4e1e9fadb02a54fd534a2a6cf38d56b2f4a57e49df1498f42d23c11210bd",
+    "exp_1620__tracer1.npz": "9317e19453e0073e50a440f0e35a62ff40bd7a7ea00ea2d5dbe0b026c19ebdb1",
+    "exp_1628__tracer1.npz": "2118dec3481779e076d088f117f15e14a900febf26d5667b17e1b3f35ec38de8",
+    "exp_1636__tracer1.npz": "61ab1c29b953a828b819841eb9273dcc5c7b144a5bffbfc0ad10f8f050561ba7",
+    "exp_1644__tracer1.npz": "4580ab862c730f7d303660e1b8ddb0b77294cd13ed818d0209fbc81594b0cf08",
+    "exp_1652__tracer1.npz": "104809769818b955f7867726c0f320a16cfb21003807e0b7634e60cb7acedf22",
+    "exp_1660__tracer1.npz": "1d3b2492c93c6a80430c21634018e7edf65d5596c1f7ded74740412936390b49",
+    "exp_1668__tracer1.npz": "9db4fb00d995cfb3e2ac2f8234c3f4ec0eeb1804ceca7a734908e7d699d28edf",
+    "exp_1676__tracer1.npz": "b6c8d7262b26c7d079d35764083299c556d166baf51e8237fbcf682d808494a8",
+    "exp_1684__tracer1.npz": "4cabdff11fba64f6b74b224c74da30a4b0a860549af0eed44a1a376e8654ca7e",
+    "exp_1692__tracer1.npz": "48c9d5db1f8cd96638e92965b6ff165e2576381755163ac9665dbbb7e52e8eff"
+  },
+  "archive_sha256": "79808ff2af94573e891754b5f52b8578afff9519788a2611d52d5bce7f3cab3c"
+}

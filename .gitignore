@@ -11,3 +11,6 @@ paper/parts/
 # Выгрузка воспроизводится: src/fetch_pdfs.py и src/import_downloads.py,
 # перечень всех работ со ссылками — library/pdf/manifest.json.
 library/pdf/*.pdf
+.obsidian/workspace.json
+.obsidian/appearance.json
+.obsidian/core-plugins.json

@@ -1,0 +1,11 @@
+{
+  "n": 25,
+  "median_error_current_m": 8.04457986224716,
+  "median_error_baseline_m": 8.013102133808305,
+  "max_error_current_m": 55.44755723174797,
+  "max_error_baseline_m": 50.60240835768548,
+  "count_error_le20_current": 21,
+  "count_error_le20_baseline": 20,
+  "mean_error_current_m": 13.126135772536564,
+  "mean_error_baseline_m": 12.737555354171906
+}
