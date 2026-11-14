@@ -51,11 +51,19 @@ def validate_csv(path: Path):
             errors_cur.append(ec)
             errors_base.append(eb)
 
-    unique_ids = sorted(set(geometry_ids))
+    # Ровно 25 строк, все geometry_id уникальны, отсортированы 150..174
     expected = list(range(150, 175))
-    if len(unique_ids) != 25 or unique_ids != expected:
-        print(f"[FAIL] ожидаем ровно 25 unique geometry_id {expected}, "
-              f"получено {len(unique_ids)}: {unique_ids}", file=sys.stderr)
+    if len(geometry_ids) != 25:
+        print(f"[FAIL] ожидалось 25 строк, получено {len(geometry_ids)}",
+              file=sys.stderr)
+        sys.exit(1)
+    if len(set(geometry_ids)) != 25:
+        print(f"[FAIL] найдены дубли geometry_id: {len(geometry_ids)} "
+              f"строк, {len(set(geometry_ids))} уникальных", file=sys.stderr)
+        sys.exit(1)
+    if sorted(geometry_ids) != expected:
+        print(f"[FAIL] geometry_id не 150..174: {sorted(geometry_ids)}",
+              file=sys.stderr)
         sys.exit(1)
 
     for gid, ec, eb in zip(geometry_ids, errors_cur, errors_base):
@@ -95,7 +103,11 @@ def desc_stats(values):
 # ---------------------------------------------------------------------------
 
 def bootstrap_pair(e_cur, e_base, n_reps, seed):
-    """Парный percentile bootstrap [2.5%,97.5%]."""
+    """Парный percentile bootstrap [2.5%,97.5%].
+    
+    Квантили берутся через np.quantile(..., method='linear') — согласованное
+    определение, не зависящее от n_reps.
+    """
     rng = np.random.default_rng(seed)
     n = len(e_cur)
     med_out = []
@@ -109,11 +121,25 @@ def bootstrap_pair(e_cur, e_base, n_reps, seed):
         frac_out.append(float(np.mean(ec <= 20.0)))
         diff_out.append(float(np.mean(eb - ec)))
 
+    # согласованные квантили, не зависят от n_reps
     ci = []
-    for arr_s in [sorted(med_out), sorted(frac_out), sorted(diff_out)]:
-        ci.append((round(arr_s[250], 6), round(arr_s[9749], 6)))  # 2.5%..97.5%
+    for arr in [med_out, frac_out, diff_out]:
+        lo, hi = np.quantile(arr, [0.025, 0.975], method='linear')
+        ci.append((round(float(lo), 6), round(float(hi), 6)))
 
-    return {"median_ci": ci[0], "frac_le20_ci": ci[1], "mean_diff_ci": ci[2]}
+    # статистика распределения mean_diff
+    diff_arr = np.array(diff_out)
+    diff_stats = {
+        "median": round(float(np.median(diff_arr)), 6),
+        "std": round(float(np.std(diff_arr, ddof=1)), 6),
+        "min": round(float(np.min(diff_arr)), 6),
+        "Q1": round(float(np.percentile(diff_arr, 25)), 6),
+        "Q3": round(float(np.percentile(diff_arr, 75)), 6),
+        "max": round(float(np.max(diff_arr)), 6),
+    }
+
+    return {"median_ci": ci[0], "frac_le20_ci": ci[1],
+            "mean_diff_ci": ci[2], "diff_stats": diff_stats}
 
 
 # ---------------------------------------------------------------------------
@@ -149,7 +175,18 @@ def main():
         b_results.append({"seed": sd,
                           "median_cur_ci": res["median_ci"],
                           "frac_le20_ci": res["frac_le20_ci"],
-                          "mean_diff_ci": res["mean_diff_ci"]})
+                          "mean_diff_ci": res["mean_diff_ci"],
+                          "diff_stats": res["diff_stats"]})
+
+    # Парная разность: статистика полных перцентилей
+    diff_stats_main = {
+        "median": round(float(np.median(diff_arr)), 6),
+        "std": round(float(np.std(diff_arr, ddof=1)), 6),
+        "min": round(float(np.min(diff_arr)), 6),
+        "Q1": round(float(np.percentile(diff_arr, 25)), 6),
+        "Q3": round(float(np.percentile(diff_arr, 75)), 6),
+        "max": round(float(np.max(diff_arr)), 6),
+    }
 
     # JSON
     out = {
@@ -162,10 +199,11 @@ def main():
             "geometry_id_range": [150, 174],
             "desc_cur": desc_cur,
             "desc_baseline": desc_base,
-            "mean_diff_baseline_minus_cur": mean_diff_all
+            "mean_diff_baseline_minus_cur": mean_diff_all,
+            "diff_stats": diff_stats_main
         },
         "bootstrap": {
-            "method": "percentile CI [2.5%..97.5%]",
+            "method": "quantile-based CI [2.5%,97.5%] via np.quantile(method='linear')",
             "n_resamples": n_reps,
             "sign": "mean_diff = baseline - cur, positive = cur better",
             "numpy_version": str(np.__version__),
@@ -208,33 +246,37 @@ def main():
 
     lines.append("")
     lines.append("--- Bootstrap CI [2.5%,97.5%] ---")
-    lines.append(f"{'seed':<12} {'median_cur':>16} {'frac_le20':>16} {'mean_diff':>16}")
-    lines.append("-" * 64)
+    lines.append(f"{'seed':<14} {'median_cur':>16} {'frac_le20':>16} {'mean_diff':>16}")
+    lines.append("-" * 68)
     for br in b_results:
         s = br["seed"]
         mc = br["median_cur_ci"]
         fl = br["frac_le20_ci"]
         md = br["mean_diff_ci"]
-        lines.append(f"{s:<12} [{mc[0]:>8.4f}..{mc[1]:>8.4f}] "
+        lines.append(f"{s:<14} [{mc[0]:>8.4f}..{mc[1]:>8.4f}] "
                      f"[{fl[0]:>8.4f}..{fl[1]:>8.4f}] "
                      f"[{md[0]:>8.4f}..{md[1]:>8.4f}]")
+    lines.append("")
+    lines.append("--- Distribution statistics of mean_diff (baseline - cur) ---")
+    dsm = diff_stats_main
+    lines.append(f"{'':<18} {'median':>12} {'std':>12} {'min':>12} {'Q1':>12} {'Q3':>12} {'max':>12}")
+    lines.append("-" * 80)
+    lines.append(f"{'full_diff':<18} {dsm['median']:>12} {dsm['std']:>12} {dsm['min']:>12} "
+                 f"{dsm['Q1']:>12} {dsm['Q3']:>12} {dsm['max']:>12}")
+    lines.append("")
+    for br in b_results:
+        s = br["seed"]
+        ds = br["diff_stats"]
+        lines.append(f"seed {s}: median={ds['median']} std={ds['std']} "
+                     f"min={ds['min']} Q1={ds['Q1']} Q3={ds['Q3']} max={ds['max']}")
 
     lines.append("")
     lines.append("--- Interpretation ---")
-    # Select first seed as reference seed
-    br0 = b_results[0]
-    md_lo, md_hi = br0["mean_diff_ci"]
-    if md_lo > 0:
-        lines.append(f"mean_diff CI [{md_lo},{md_hi}] — данные post-hoc не устанавливают "
-                     f"преимущество baseline над current, но и не доказывают отсутствие преимущества.")
-    elif md_hi < 0:
-        lines.append(f"mean_diff CI [{md_lo},{md_hi}] — данные post-hoc не устанавливают "
-                     f"преимущество current над baseline.")
-    else:
-        lines.append(f"mean_diff CI [{md_lo},{md_hi}] включает 0 — данные этого "
-                     f"исследовательского анализа не устанавливают преимущество "
-                     f"ни одного варианта. Не доказано отсутствие преимущества, "
-                     f"только несущественность при n=25.")
+    lines.append("mean_diff = baseline - current. Положительное значение")
+    lines.append("означает преимущество current (меньшая ошибка на scene).")
+    lines.append("Интервалы bootstrap — post-hoc, при предположении обменности")
+    lines.append("и репрезентативности 25 фиксированных сцен. Все 3 seed показаны")
+    lines.append("без выделения «лучшего» — они проверяют устойчивость Монте-Карло.")
 
     lines.append("")
     lines.append("OUTPUT: " + str(JSON_OUT) + "  " + str(TXT_OUT))

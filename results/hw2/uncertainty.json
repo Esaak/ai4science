@@ -31,10 +31,18 @@
       "max": 50.602408,
       "count_le20": 20
     },
-    "mean_diff_baseline_minus_cur": -0.388581
+    "mean_diff_baseline_minus_cur": -0.388581,
+    "diff_stats": {
+      "median": -0.510882,
+      "std": 4.912747,
+      "min": -11.223921,
+      "Q1": -2.872532,
+      "Q3": 1.460482,
+      "max": 16.567511
+    }
   },
   "bootstrap": {
-    "method": "percentile CI [2.5%..97.5%]",
+    "method": "quantile-based CI [2.5%,97.5%] via np.quantile(method='linear')",
     "n_resamples": 10000,
     "sign": "mean_diff = baseline - cur, positive = cur better",
     "numpy_version": "2.5.4",
@@ -55,9 +63,17 @@
           0.96
         ],
         "mean_diff_ci": [
-          -2.13407,
-          1.617206
-        ]
+          -2.134169,
+          1.617214
+        ],
+        "diff_stats": {
+          "median": -0.431788,
+          "std": 0.959123,
+          "min": -3.525718,
+          "Q1": -1.05292,
+          "Q3": 0.23118,
+          "max": 3.751461
+        }
       },
       {
         "seed": 20261116,
@@ -70,9 +86,17 @@
           0.96
         ],
         "mean_diff_ci": [
-          -2.14532,
-          1.610845
-        ]
+          -2.145333,
+          1.610864
+        ],
+        "diff_stats": {
+          "median": -0.423908,
+          "std": 0.956951,
+          "min": -3.447351,
+          "Q1": -1.042909,
+          "Q3": 0.224379,
+          "max": 3.656931
+        }
       },
       {
         "seed": 20261117,
@@ -85,9 +109,17 @@
           0.96
         ],
         "mean_diff_ci": [
-          -2.187819,
-          1.623692
-        ]
+          -2.187885,
+          1.623887
+        ],
+        "diff_stats": {
+          "median": -0.43136,
+          "std": 0.969997,
+          "min": -3.806956,
+          "Q1": -1.054791,
+          "Q3": 0.232975,
+          "max": 3.463177
+        }
       }
     ]
   }
