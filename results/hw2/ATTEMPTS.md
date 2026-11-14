@@ -84,7 +84,7 @@
 |---|---|---|---|
 | 1 | `.venv/bin/python checks/check_hw2.py --synthetic` | 0 | 8 тестов пройдены (добавлен test_width_shift_invariance) |
 | 2 | `.venv/bin/python checks/check_hw2.py --dry-run` | 0 | Архив проверен (маска valid, нулевые суммы по valid), выход без таблицы |
-| 3 | `.venv/bin/python checks/checkHW2.py` | 0 | Медиана=8.04м, 21/25≤20м, ПРИНЯТА |
+| 3 | `.venv/bin/python checks/check_hw2.py` | 0 | Медиана=8.04м, 21/25≤20м, ПРИНЯТА |
 
 **Исправления:**
 1. Ширина: собственный центр `current`/`baseline` вместо центра LES (geometry 167: W_cur 129.51 м, W_base 132.56 м — было 140.88/141.89)

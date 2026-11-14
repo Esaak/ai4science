@@ -146,3 +146,6 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 | Архив `fixtures/hw2/plumes.npz`, `manifest.json` | `[порождено]` | ИИ-ассистент | SHA-256 сверен; не Гусь |
 | Внутренняя сверка 25 строк | `[порождено]` | ИИ-ассистент | <0.00004 м от пилота; не попытка Гуся |
 | Настоящий отчёт | `[порождено: deepseek-v4-flash/latest]` | учебный агент (Гусь) | сверен с `METHOD.md`, `summary.json` |
+
+## Связи
+- тип: [[Отчёт]]

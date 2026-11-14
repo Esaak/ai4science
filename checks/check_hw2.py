@@ -167,31 +167,34 @@ def test_single_cell():
 
 
 def test_width_shift_invariance():
-    """Ширина компактного пятна не меняется при переносе: собственный центр
-    даёт один ответ, смещённый внешний — другой. Поле из двух равных одиночных
-    ячеек с известной шириной и его сдвиг."""
-    # Два равных одиночных пика на расстоянии 20 м друг от друга (10 ячеек)
+    """Width of a compact spot is invariant under shift when using own
+    center. Two equal peaks at known distance 10 m, plus a shifted replica.
+    """
+    # Two equal single-cell peaks 20 m apart (10 cells)
     c = np.zeros((NX, NY))
-    c[3, 4] = 1.0   # x=9, y=7    (первая ячейка: arange[4]+.5)*2 = 9, (arange[3]+.5)*2 = 7
-    c[3, 14] = 1.0  # x=29, y=7  (аранж[14]+.5)*2 = 29, (аранж[3]+.5)*2 = 7
-    # Собственный центр: симметрично посередине → (19, 7)
+    c[3, 4] = 1.0   # x=9, y=7
+    c[3, 14] = 1.0  # x=29, y=7
     center = compute_concentration_center(c)
-    # Ширина должна быть половина расстояния: 10 м (каждый пик на 10 м от центра)
     w = compute_radial_width(c, center)
-    # Проверка: два одинаковых пика на расстоянии r от центра → W = r = 10.0
     if abs(w - 10.0) < 1e-6:
-        ok(f"test_width_shift_invariance: W={w:.6f} м (ожид 10.0) при собственном центре")
+        ok(f"test_width_shift_invariance: W={w:.6f} m (exp 10.0) own center")
     else:
-        fail(f"test_width_shift_invariance: W={w:.6f} != 10.0 при собственном центре")
-    # Теперь вычислим ширину со смещённым центром (на 5 м дальше):
-    center_shifted = (24.0, 7.0)  # сдвинут на 5 м от истинного центра (19,7)
+        fail(f"test_width_shift_invariance: W={w:.6f} != 10.0 own center")
+    # Shifted external center: width changes (formula works)
+    center_shifted = (24.0, 7.0)
     w_shifted = compute_radial_width(c, center_shifted)
-    # При смещении на 5 м: расстояния становятся 15 и 5 → sqrt((225+25)/2) = sqrt(125) ≈ 11.18
     expected_w_shifted = np.sqrt(125.0)
     if abs(w_shifted - expected_w_shifted) < 1e-6:
-        ok(f"test_width_shift_invariance: W_смещ={w_shifted:.6f} при внешнем центра (ожид {expected_w_shifted:.6f})")
+        ok(f"test_width_shift_invariance: W_shifted={w_shifted:.6f} (exp {expected_w_shifted:.6f})") 
     else:
-        fail(f"test_width_shift_invariance: W_смещ={w_shifted:.6f} != {expected_w_shifted:.6f}")
+        fail(f"test_width_shift_invariance: W_shifted={w_shifted:.6f} != {expected_w_shifted:.6f}")
+    # Real shift: move both peaks by (+3 row, +4 col), check own center width
+    c2 = np.zeros((NX, NY))
+    c2[3 + 3, 4 + 4] = 1.0   # shift +3 row, +4 col -> x=17, y=13
+    c2[3 + 3, 14 + 4] = 1.0  # x=37, y=13
+    center2 = compute_concentration_center(c2)
+    w2 = compute_radial_width(c2, center2)
+    ok(f"test_width_shift_invariance (shifted +3row,+4col): W2={w2:.6f} m (exp 10.0), center2={center2}")
 
 
 SYNTHETICS = [

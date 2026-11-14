@@ -6,6 +6,7 @@
   "python": "3.10.12",
   "numpy": "1.24.4",
   "torch": "2.3.0a0+40ec155e58.nv24.03",
+  "export_env": "python 3.10.12, numpy 1.24.4, torch — для экспорта архива с сервера; локальное окружение для проверки (Python 3.14.4, numpy 2.5.4) прописано в METHOD.md и отчёте",
   "checkpoint_sha256": {
     "current": "6fb46133f37d84a576be3f90ac16edd8e6d5666807f455abf0020195ea7c285d",
     "baseline": "217d354db607923e0f49a7ea19a2148be82d60655da0dd5642e7306fabe23b2e"
