@@ -10,6 +10,7 @@
 """
 
 import sys
+import os
 import numpy as np
 
 # ---------------------------------------------------------------------------
@@ -17,8 +18,8 @@ import numpy as np
 # ---------------------------------------------------------------------------
 NX, NY = 128, 128          # число ячеек
 DX, DY = 2.0, 2.0           # размер ячейки, м
-X = (np.arange(NX) + 1) * DX      # координаты центров ячеек по X, x=2*j+1
-Y = (np.arange(NY) + 1) * DY      # координаты центров ячеек по Y, y=2*i+1
+X = (np.arange(NX) + 0.5) * DX      # координаты центров ячеек по X, x=2*j+1
+Y = (np.arange(NY) + 0.5) * DY      # координаты центров ячеек по Y, y=2*i+1
 
 # ---------------------------------------------------------------------------
 # Вспомогательные функции
@@ -135,6 +136,24 @@ def test_additivity() -> None:
         fail("test_additivity: rel_err={:.2e}".format(rel_err), code=1)
 
 
+def test_single_cell() -> None:
+    """Тест 7: Единичная ненулевая ячейка.
+    row=3, col=4 → центр (x=9, y=7) при DX=DY=2."""
+    c = np.zeros((NX, NY))
+    c[3, 4] = 1.0
+    center = compute_concentration_center(c)
+
+    # (row=3, col=4) → X[4]=(4+0.5)*2=9, Y[3]=(3+0.5)*2=7
+    expected = (9.0, 7.0)
+    if abs(center[0] - expected[0]) < 1e-10 and \
+       abs(center[1] - expected[1]) < 1e-10:
+        ok("test_single_cell: row3,col4 = ({:.1f},{:.1f})".format(
+            center[0], center[1]))
+    else:
+        fail("test_single_cell: ({:.1f},{:.1f}); ожид. {}".format(
+            center[0], center[1], expected), code=1)
+
+
 def test_scale_invariance() -> None:
     """Тест 2: Инвариантность центра к масштабированию.
     Центр для c и k·c должен совпадать."""
@@ -155,67 +174,74 @@ def test_mask() -> None:
     """Тест 3: Корректность маски.
     Поле с ненулевыми концентрациями под зданиями (внутри маски) —
     ячейки под зданиями исключены из расчёта центра и интеграла."""
-    # Пятно-сигнал
     c = np.zeros((NX, NY))
     c[30:40, 40:50] = 1.0  # 10×10 пятно, сумма = 100
-    # «Под зданием» — ложная концентрация, которую маска должна排除
-    c[50, 50] = 100.0     # один чужой пиксель
+    c[50, 50] = 100.0     # один чужой пиксель под зданием
 
-    # Маска: всё, кроме ячейки [50, 50]
     mask = np.ones((NX, NY), dtype=bool)
     mask[50, 50] = False
 
-    # С маской: интеграл = 100 * 2 * 2 = 400
     I_masked = compute_area_integral(c, mask)
-    # Без маски: интеграл = 200 * 2 * 2 = 800
     I_all = compute_area_integral(c, None)
 
-    #痘屏蔽的细胞已被排除
-    if I_masked < I_all - 0.5:
-        ok("test_mask: ячейка под зданием исключена из интеграла (I_masked={:.0f} < I_all={:.0f})".format(
-            I_masked, I_all))
+    # Пятно: 100 ячеек × 2×2 = 400; центр пятна: rows 30..39, cols 40..49
+    # X[40:50] = (40.5..49.5)*2 = [81,83,..,99] → среднее = 90
+    # Y[30:40] = (30.5..39.5)*2 = [61,63,..,79] → среднее = 70
+    center_masked = compute_concentration_center(c, mask)
+    expected_center = (90.0, 70.0)
+    if abs(I_masked - 400.0) < 0.5 and \
+       euclidean_error(center_masked, expected_center) < 1e-10:
+        ok("test_mask: I_masked={:.0f} (отсечён пиксель c[50,50]), "
+           "центр=({:.1f},{:.1f})".format(I_masked, center_masked[0], center_masked[1]))
     else:
-        fail("test_mask: маска не работает (I_masked={:.0f}, I_all={:.0f})".format(I_masked, I_all), code=1)
+        fail("test_mask: I_masked={:.0f}, центр={:.1f},{:.1f}; "
+             "ожид. 400, (90,70)".format(I_masked, center_masked[0], center_masked[1]),
+             code=1)
 
 
 def test_shift() -> None:
-    """Тест 4: Смещение пятна на одну ячейку.
-    c_shifted — то же пятно, сдвинутое на 1 ячейку (2 м) по X.
-    Ошибка центра должна быть ≈ 2 м."""
+    """Тест 4: Смещение пятна на одну ячейку по столбцу.
+    c_shifted — то же пятно, сдвинутое на 1 колонку (2 м) по X, Y без изменения."""
     c = np.zeros((NX, NY))
     c[30:35, 40:45] = 1.0
     c_shifted = np.zeros((NX, NY))
-    c_shifted[31:36, 40:45] = 1.0  # сдвиг на 1 ячейку по X
+    c_shifted[30:35, 41:46] = 1.0  # сдвиг на 1 колонку по X
 
     center = compute_concentration_center(c)
     center_shifted = compute_concentration_center(c_shifted)
-    err = euclidean_error(center, center_shifted)
-    if abs(err - 2.0) < 0.5:
-        ok("test_shift: смещение ≈ 2 м  (err={:.2f} м)".format(err))
+
+    dx = abs(center_shifted[0] - center[0] - 2.0)
+    dy = abs(center_shifted[1] - center[1])
+    if dx < 1e-10 and dy < 1e-10:
+        ok("test_shift: X+2={:.6f}, ΔY={:.2e}".format(dx, dy))
     else:
-        fail("test_shift: err={:.2f} м, ожидаемо ≈ 2 м".format(err), code=1)
+        fail("test_shift: dx={:.2e}, dy={:.2e} (ожид. 0,0)".format(dx, dy), code=1)
 
 
 def test_rotation() -> None:
-    """Тест 5: Поворот пятна на 90° вокруг центра области.
-    Ошибка центра должна равняться расстоянию между центрами."""
-    cx_area, cy_area = X.max() / 2.0 + DX / 2.0, Y.max() / 2.0 + DY / 2.0
-    # Асимметричное пятно в правом верхнем квадранте
+    """Тест 5: Поворот пятна на 90°.
+    np.rot90 → (x,y) → (y, 256-x) с допуском 1e-10."""
+    # Асимметричное пятно
     c = np.zeros((NX, NY))
     c[80:90, 90:100] = 1.0
     c[70:75, 95:105] = 2.0  # смещено — не симметрично
 
-    c_rotated = np.rot90(c, k=1)  # поворот на 90° против часовой
+    c_rotated = np.rot90(c, k=1)
     center = compute_concentration_center(c)
     center_rot = compute_concentration_center(c_rotated)
-    err = euclidean_error(center, center_rot)
 
-    # Независимо рассчитываем центры по формуле
-    # и проверяем, что err ≠ 0 и положителен
-    if err > 1.0:
-        ok("test_rotation: поворот на 90° → err={:.2f} м".format(err))
+    x0, y0 = center
+    x_expected = y0
+    y_expected = 256.0 - x0
+    if abs(center_rot[0] - x_expected) < 1e-10 and \
+       abs(center_rot[1] - y_expected) < 1e-10:
+        ok("test_rotation: (x0,y0)=({:.1f},{:.1f}) → "
+           "({:.1f},{:.1f})".format(x0, y0, center_rot[0], center_rot[1]))
     else:
-        fail("test_rotation: err={:.2f} м, ожидаемо > 1 м".format(err), code=1)
+        fail("test_rotation: ({:.1f},{:.1f}) → ({:.1f},{:.1f}); "
+             "ожид. ({:.1f},{:.1f})".format(
+                 x0, y0, center_rot[0], center_rot[1], x_expected, y_expected),
+             code=1)
 
 
 def test_zero_field() -> None:
@@ -241,6 +267,7 @@ def run_synthetic():
         ("test_shift",          test_shift),
         ("test_rotation",       test_rotation),
         ("test_zero_field",     test_zero_field),
+        ("test_single_cell",    test_single_cell),
     ]
     failed = []
     for name, fn in tests:
@@ -264,20 +291,22 @@ def main():
         run_synthetic()
         return
 
-    # По умолчанию: вызов без --synthetic — краткий авторейтинг функций.
-    # В будущем сюда войдёт загрузка данных и расчёт по 25 сценам.
-    print("check_hw2.py — метрики центра концентрации, интеграла и ширины.")
-    print("Запуск: python checks/check_hw2.py --synthetic")
-    print("Пример:")
-    c_example = np.zeros((NX, NY))
-    c_example[60:70, 60:70] = 1.0
-    mask_example = c_example > 0
-    center = compute_concentration_center(c_example, mask_example)
-    integral = compute_area_integral(c_example, mask_example)
-    width = compute_radial_width(c_example, center, mask_example)
-    print(f"  Центр: {center[0]:.2f}, {center[1]:.2f} м")
-    print(f"  Интеграл: {integral:.2f}")
-    print(f"  Ширина: {width:.2f} м")
+    # Проверка локального пакета 25 сцен (geometry_id 150–174):
+    archive = "data/edison_cache/val.npz"
+    if not os.path.isfile(archive):
+        print("нет локального пакета")
+        sys.exit(1)
+    try:
+        data = np.load(archive)
+        scenes = data["idx"].shape[0] if "idx" in data else 0
+    except KeyError:
+        scenes = 0
+
+    if scenes < 25:
+        print("нет локального пакета")
+        sys.exit(1)
+
+    print("Сцена: {}, геометрии 150–174.".format(scenes))
 
 if __name__ == "__main__":
     main()
