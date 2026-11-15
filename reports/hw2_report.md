@@ -8,8 +8,8 @@
 |---|---|
 | Направление | вычислительное |
 | Вариант верификатора | код с тестами на свойствах и проверкой данных |
-| Репозиторий | локальный, ветка `hw2-work`, публичный URL — ожидает решения пользователя |
-| Метка git | `hw2` — ожидает решения пользователя |
+| Репозиторий | https://github.com/Esaak/ai4science, ветка `hw2-work` |
+| Метка git | `hw2` |
 | Команда запуска верификатора | `.venv/bin/python checks/check_hw2.py` |
 
 ## 1. Задача и место верификатора
@@ -193,7 +193,7 @@ Z1 (3 м), штатная маска валидных ячеек по высот
 ## 7. Воспроизведение
 
 ```bash
-git clone <репозиторий> hw2_check && cd hw2_check && git checkout hw2
+git clone https://github.com/Esaak/ai4science.git hw2_check && cd hw2_check && git checkout hw2
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python checks/check_hw2.py
 ```
