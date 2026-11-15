@@ -1,3 +1,0 @@
-ee4b11f ilya_gerasimov diary: запись о метриках суррогата
-cd4ae50 ilya_gerasimov Реализованы метрики Chang & Hanna: src/metrics.py, results/metrics.json, results/metrics_table.md
-ba5b14d Ilya Gerasimov исходное состояние

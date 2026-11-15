@@ -90,7 +90,7 @@
 1. Ширина: собственный центр `current`/`baseline` вместо центра LES (geometry 167: W_cur 129.505 м, W_base 132.555 м — было 140.876/141.886)
 2. CLI: argparse с `--synthetic` / `--dry-run` / полный режим
 3. Маска: удалён фиктивный self-compare; добавлены проверки ≥1 допустимой ячейки / нулевые суммы по valid
-4. manifest.json: добавлен pilot_method_commit (9c3c149), method_commit→5067b96
+4. manifest.json: уточнена ссылка на методику учебного верификатора, method_commit→5067b96
 
 Коммиты (факты, не вымышленные действия):
 - `16548be` — ширина/CLI/маска/manifest
