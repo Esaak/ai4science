@@ -1,6 +1,6 @@
 {
-  "pilot_method_commit": "f6ca07f7602eec1dfa12a40cf26e6f6e1bd000ac",
-  "method_commit": "4963c8e200c49f9530b2b1bbec4466c2097f9705",
+  "pilot_method_commit": "9c3c14973378baa3039991335537420e2a7a0225",
+  "method_commit": "5067b968c9ed24ce857730c4b583257410702a48",
   "selection": "geometry_id=150..174, dir_k=0, tracer=1; one scene per geometry",
   "server_project_commit": "b31a34c68bdb461b26d8d0a923f3bb98bb739fff",
   "python": "3.10.12",
