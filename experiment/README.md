@@ -38,3 +38,29 @@
 прогона содержат хеши входов, кода и таблицы, версии Python и NumPy.
 Протокол и ограничения описаны в [постановке исследования](../research/problem.md).
 Перед включением результатов в статью требуется верификация автора.
+
+## Сводная статистика и рисунок
+
+Для шага 4 установите Matplotlib в окружение эксперимента. Версии первого
+прогона — Python 3.14.4, NumPy 2.5.4 и Matplotlib 3.11.2.
+
+```bash
+.venv/bin/python -m pip install matplotlib==3.11.2
+.venv/bin/python -m experiment.analyze_pairs
+```
+
+Команда проверяет хеш и состав таблицы, затем из тех же 25 пар сохраняет
+`results/summary.json` и векторный `results/paired_errors.pdf`. Статистика
+включает среднюю парную разность Gaussian − DL, 95% парный bootstrap-интервал,
+медианы и число ошибок ≤ 20 м. Параметры bootstrap зафиксированы в
+[протоколе](../research/problem.md). JSON содержит версии среды и SHA-256
+таблицы, скрипта и PDF.
+
+Для повтора из сохранённых полей в отдельный каталог выполните из корня
+репозитория:
+
+```bash
+out=$(mktemp -d)
+.venv/bin/python -m experiment.compare_centroids --output-dir "$out" && \
+  .venv/bin/python -m experiment.analyze_pairs --input-dir "$out" --output-dir "$out"
+```

@@ -1,0 +1,31 @@
+{
+  "n": 25,
+  "mean_difference_m": 10.65551991801456,
+  "ci_95_m": [
+    3.58588823084365,
+    17.085781475674064
+  ],
+  "bootstrap": {
+    "resamples": 10000,
+    "seed": 20261121,
+    "generator": "PCG64",
+    "method": "percentile",
+    "interpolation": "linear"
+  },
+  "dl": {
+    "median_m": 8.044579415235,
+    "count_le_20_m": 21
+  },
+  "gaussian": {
+    "median_m": 18.604579938005,
+    "count_le_20_m": 14
+  },
+  "csv_sha256": "e92ec7854be8cac532d5cd01289c3816cd5a3717e314a823f90763c25f835185",
+  "code_sha256": "8d1494c3717500141f8b14b7e7edc95dbd2eeb8755429fb7a5c352467645128c",
+  "versions": {
+    "python": "3.14.4",
+    "numpy": "2.5.4",
+    "matplotlib": "3.11.2"
+  },
+  "pdf_sha256": "e5273eb1f50b0040d0b28d125128e7f17cad37234638dd66ad2e0e8ae661df2b"
+}
