@@ -1,0 +1,822 @@
+[
+  {
+    "geometry_id": 150,
+    "scene_name": "exp_1500__tracer1.npz",
+    "source_npz_sha256": "5c5b4529f94adf97dc5e55793bee4d099c524cdbc9527520bffab74575bc1f4f",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9796432256698608,
+      -0.2007465660572052
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          50.0,
+          86.0,
+          103.87,
+          110.87
+        ],
+        "relative_power": 52657.920000000006
+      },
+      {
+        "bounds_m": [
+          27.32,
+          34.32,
+          202.0,
+          256.0
+        ],
+        "relative_power": 609327.3600000001
+      },
+      {
+        "bounds_m": [
+          130.26,
+          137.26,
+          32.0,
+          88.0
+        ],
+        "relative_power": 655298.56
+      }
+    ]
+  },
+  {
+    "geometry_id": 151,
+    "scene_name": "exp_1508__tracer1.npz",
+    "source_npz_sha256": "9b33f5193350cbe7674ac55fec303d69d3dad7692322b0e770e4db1f8dd6e40d",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.8662526607513428,
+      -0.499606192111969
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          174.0,
+          194.0,
+          127.89,
+          134.89
+        ],
+        "relative_power": 29254.399999999885
+      },
+      {
+        "bounds_m": [
+          216.87,
+          223.87,
+          0.0,
+          62.0
+        ],
+        "relative_power": 803242.2400000001
+      },
+      {
+        "bounds_m": [
+          174.0,
+          194.0,
+          142.44,
+          149.44
+        ],
+        "relative_power": 29254.4
+      }
+    ]
+  },
+  {
+    "geometry_id": 152,
+    "scene_name": "exp_1516__tracer1.npz",
+    "source_npz_sha256": "d66c8f871ab335369f2df2c69a97a58b09d827301303e678007508f1a6d654a9",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9336563944816589,
+      -0.35816991329193115
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          74.0,
+          112.0,
+          26.57,
+          33.57
+        ],
+        "relative_power": 55583.36000000001
+      },
+      {
+        "bounds_m": [
+          42.0,
+          80.0,
+          49.58,
+          56.58
+        ],
+        "relative_power": 55583.36000000001
+      },
+      {
+        "bounds_m": [
+          90.0,
+          224.0,
+          247.32,
+          254.32
+        ],
+        "relative_power": 196004.48
+      }
+    ]
+  },
+  {
+    "geometry_id": 153,
+    "scene_name": "exp_1524__tracer1.npz",
+    "source_npz_sha256": "a61468b1b6ac8dab74f40ac2d3f09d87805d2816b52106b56f6e6ee41110d06c",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9424687027931213,
+      -0.3342944383621216
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          6.91,
+          13.91,
+          46.0,
+          128.0
+        ],
+        "relative_power": 1405047.04
+      },
+      {
+        "bounds_m": [
+          169.35,
+          176.35,
+          0.0,
+          256.0
+        ],
+        "relative_power": 13694402.56
+      },
+      {
+        "bounds_m": [
+          40.0,
+          126.0,
+          148.16,
+          155.16
+        ],
+        "relative_power": 125793.92000000001
+      }
+    ]
+  },
+  {
+    "geometry_id": 154,
+    "scene_name": "exp_1532__tracer1.npz",
+    "source_npz_sha256": "9e295004accb56da0ab57b0203591e5902fae6e086847274f799e5d99cad118e",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.7612432241439819,
+      -0.6484664678573608
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          211.88,
+          218.88,
+          206.0,
+          256.0
+        ],
+        "relative_power": 522400.00000000006
+      },
+      {
+        "bounds_m": [
+          96.68,
+          103.68,
+          36.0,
+          86.0
+        ],
+        "relative_power": 522400.00000000006
+      }
+    ]
+  },
+  {
+    "geometry_id": 155,
+    "scene_name": "exp_1540__tracer1.npz",
+    "source_npz_sha256": "9b4335b4201775ca48eda9b418ea139daba7255bea35c85290446b6f883bb142",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.793671190738678,
+      -0.6083469390869141
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          79.77,
+          86.77,
+          0.0,
+          128.0
+        ],
+        "relative_power": 3423600.64
+      },
+      {
+        "bounds_m": [
+          161.39,
+          168.39,
+          38.0,
+          254.0
+        ],
+        "relative_power": 9749237.760000002
+      },
+      {
+        "bounds_m": [
+          232.11,
+          239.11,
+          166.0,
+          256.0
+        ],
+        "relative_power": 1692576.0000000002
+      }
+    ]
+  },
+  {
+    "geometry_id": 156,
+    "scene_name": "exp_1548__tracer1.npz",
+    "source_npz_sha256": "e28ab79154dc362cd236afd8bc71d8e2cdab827cb0f124ec7698e763689a7df7",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.8571376800537109,
+      -0.5150874257087708
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          119.12,
+          126.12,
+          26.0,
+          60.0
+        ],
+        "relative_power": 241557.76
+      },
+      {
+        "bounds_m": [
+          154.53,
+          161.53,
+          0.0,
+          172.0
+        ],
+        "relative_power": 6181872.640000001
+      },
+      {
+        "bounds_m": [
+          0.0,
+          20.0,
+          49.04,
+          56.04
+        ],
+        "relative_power": 29254.4
+      }
+    ]
+  },
+  {
+    "geometry_id": 157,
+    "scene_name": "exp_1556__tracer1.npz",
+    "source_npz_sha256": "bf289f9ab2e4c48afe6de3b0749bb9043833a8309b0a70ef9a9f735b82e21e68",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9399106502532959,
+      -0.3414205312728882
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          242.06,
+          249.06,
+          120.0,
+          196.0
+        ],
+        "relative_power": 1206952.9600000002
+      }
+    ]
+  },
+  {
+    "geometry_id": 158,
+    "scene_name": "exp_1564__tracer1.npz",
+    "source_npz_sha256": "099381baa6051dfa6d4a00897c29ca4272f2c733676164b1d9d2d8fbe32b46cb",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.7555564641952515,
+      -0.6550835371017456
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          65.7,
+          72.7,
+          228.0,
+          256.0
+        ],
+        "relative_power": 163824.64
+      },
+      {
+        "bounds_m": [
+          74.0,
+          114.0,
+          36.23,
+          43.23
+        ],
+        "relative_power": 58508.8
+      },
+      {
+        "bounds_m": [
+          0.0,
+          114.0,
+          52.57,
+          59.57
+        ],
+        "relative_power": 166750.08000000002
+      }
+    ]
+  },
+  {
+    "geometry_id": 159,
+    "scene_name": "exp_1572__tracer1.npz",
+    "source_npz_sha256": "c1b3fdd193abbd9a1734ddce075151e4415aadb9893c1fcd2bf214630b9884f7",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.999347448348999,
+      -0.03612099215388298
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          0.0,
+          24.0,
+          107.02,
+          114.02
+        ],
+        "relative_power": 35105.280000000006
+      }
+    ]
+  },
+  {
+    "geometry_id": 160,
+    "scene_name": "exp_1580__tracer1.npz",
+    "source_npz_sha256": "8426dc6f949a324daddefa76685b60fd59b8d085263a69a5cae20d9feaf4fd3b",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.7210652232170105,
+      -0.6928671598434448
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          148.0,
+          228.0,
+          177.94,
+          184.94
+        ],
+        "relative_power": 117017.6
+      },
+      {
+        "bounds_m": [
+          148.0,
+          228.0,
+          157.0,
+          164.0
+        ],
+        "relative_power": 117017.6
+      },
+      {
+        "bounds_m": [
+          24.0,
+          104.0,
+          18.44,
+          25.44
+        ],
+        "relative_power": 117017.6
+      }
+    ]
+  },
+  {
+    "geometry_id": 161,
+    "scene_name": "exp_1588__tracer1.npz",
+    "source_npz_sha256": "83c4a24855dfe4128a618497ada2712c576f2fc0cd60681786cebe4393f7547b",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.8645071983337402,
+      -0.5026204586029053
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          64.62,
+          71.62,
+          150.0,
+          180.0
+        ],
+        "relative_power": 188064.00000000003
+      },
+      {
+        "bounds_m": [
+          148.13,
+          155.13,
+          236.0,
+          256.0
+        ],
+        "relative_power": 83584.00000000001
+      }
+    ]
+  },
+  {
+    "geometry_id": 162,
+    "scene_name": "exp_1596__tracer1.npz",
+    "source_npz_sha256": "15149fc752786b1334083cac8a3d988212afd6ed155ab062b58213791ed279ac",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9336563944816589,
+      -0.35816991329193115
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          0.0,
+          256.0,
+          189.85,
+          196.85
+        ],
+        "relative_power": 374456.32
+      },
+      {
+        "bounds_m": [
+          2.77,
+          9.77,
+          38.0,
+          90.0
+        ],
+        "relative_power": 565027.8400000001
+      },
+      {
+        "bounds_m": [
+          0.0,
+          154.0,
+          242.05,
+          249.05
+        ],
+        "relative_power": 225258.88000000003
+      }
+    ]
+  },
+  {
+    "geometry_id": 163,
+    "scene_name": "exp_1604__tracer1.npz",
+    "source_npz_sha256": "19d57e66a0b579daa2df9b49fdd064355a9144f006759dfdc5b23ae2a97e6bb1",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9786778092384338,
+      -0.20540151000022888
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          0.0,
+          256.0,
+          125.09,
+          132.09
+        ],
+        "relative_power": 374456.32
+      }
+    ]
+  },
+  {
+    "geometry_id": 164,
+    "scene_name": "exp_1612__tracer1.npz",
+    "source_npz_sha256": "8e0d4e1e9fadb02a54fd534a2a6cf38d56b2f4a57e49df1498f42d23c11210bd",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9964340329170227,
+      -0.08437546342611313
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          71.98,
+          78.98,
+          38.0,
+          88.0
+        ],
+        "relative_power": 522400.00000000006
+      },
+      {
+        "bounds_m": [
+          133.6,
+          140.6,
+          0.0,
+          256.0
+        ],
+        "relative_power": 13694402.56
+      }
+    ]
+  },
+  {
+    "geometry_id": 165,
+    "scene_name": "exp_1620__tracer1.npz",
+    "source_npz_sha256": "9317e19453e0073e50a440f0e35a62ff40bd7a7ea00ea2d5dbe0b026c19ebdb1",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.8339049220085144,
+      -0.5519080758094788
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          0.0,
+          256.0,
+          84.73,
+          91.73
+        ],
+        "relative_power": 374456.32
+      }
+    ]
+  },
+  {
+    "geometry_id": 166,
+    "scene_name": "exp_1628__tracer1.npz",
+    "source_npz_sha256": "2118dec3481779e076d088f117f15e14a900febf26d5667b17e1b3f35ec38de8",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.8862254619598389,
+      -0.4632542133331299
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          118.0,
+          152.0,
+          226.89,
+          233.89
+        ],
+        "relative_power": 49732.48
+      }
+    ]
+  },
+  {
+    "geometry_id": 167,
+    "scene_name": "exp_1636__tracer1.npz",
+    "source_npz_sha256": "61ab1c29b953a828b819841eb9273dcc5c7b144a5bffbfc0ad10f8f050561ba7",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.8928127288818359,
+      -0.4504280388355255
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          227.74,
+          234.74,
+          30.0,
+          56.0
+        ],
+        "relative_power": 141256.96000000002
+      },
+      {
+        "bounds_m": [
+          1.38,
+          8.38,
+          200.0,
+          226.0
+        ],
+        "relative_power": 141256.96000000005
+      }
+    ]
+  },
+  {
+    "geometry_id": 168,
+    "scene_name": "exp_1644__tracer1.npz",
+    "source_npz_sha256": "4580ab862c730f7d303660e1b8ddb0b77294cd13ed818d0209fbc81594b0cf08",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9994843006134033,
+      -0.03211194649338722
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          0.0,
+          24.0,
+          123.68,
+          130.68
+        ],
+        "relative_power": 35105.280000000006
+      },
+      {
+        "bounds_m": [
+          78.0,
+          118.0,
+          124.14,
+          131.14
+        ],
+        "relative_power": 58508.79999999977
+      },
+      {
+        "bounds_m": [
+          64.65,
+          71.65,
+          174.0,
+          256.0
+        ],
+        "relative_power": 1405047.04
+      }
+    ]
+  },
+  {
+    "geometry_id": 169,
+    "scene_name": "exp_1652__tracer1.npz",
+    "source_npz_sha256": "104809769818b955f7867726c0f320a16cfb21003807e0b7634e60cb7acedf22",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9927046298980713,
+      -0.12057141214609146
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          212.0,
+          256.0,
+          203.08,
+          210.08
+        ],
+        "relative_power": 64359.68000000001
+      }
+    ]
+  },
+  {
+    "geometry_id": 170,
+    "scene_name": "exp_1660__tracer1.npz",
+    "source_npz_sha256": "1d3b2492c93c6a80430c21634018e7edf65d5596c1f7ded74740412936390b49",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9684652090072632,
+      -0.24914872646331787
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          103.55,
+          110.55,
+          0.0,
+          90.0
+        ],
+        "relative_power": 1692576.0000000002
+      },
+      {
+        "bounds_m": [
+          147.58,
+          154.58,
+          220.0,
+          256.0
+        ],
+        "relative_power": 270812.16000000003
+      }
+    ]
+  },
+  {
+    "geometry_id": 171,
+    "scene_name": "exp_1668__tracer1.npz",
+    "source_npz_sha256": "9db4fb00d995cfb3e2ac2f8234c3f4ec0eeb1804ceca7a734908e7d699d28edf",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.7917267084121704,
+      -0.6108754277229309
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          207.19,
+          214.19,
+          62.0,
+          256.0
+        ],
+        "relative_power": 7864418.5600000005
+      },
+      {
+        "bounds_m": [
+          26.0,
+          80.0,
+          26.66,
+          33.66
+        ],
+        "relative_power": 78986.87999999993
+      },
+      {
+        "bounds_m": [
+          73.9,
+          80.9,
+          0.0,
+          20.0
+        ],
+        "relative_power": 83584.00000000001
+      }
+    ]
+  },
+  {
+    "geometry_id": 172,
+    "scene_name": "exp_1676__tracer1.npz",
+    "source_npz_sha256": "b6c8d7262b26c7d079d35764083299c556d166baf51e8237fbcf682d808494a8",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9411946535110474,
+      -0.3378647565841675
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          201.12,
+          208.12,
+          236.0,
+          256.0
+        ],
+        "relative_power": 83584.00000000001
+      },
+      {
+        "bounds_m": [
+          246.56,
+          253.56,
+          236.0,
+          256.0
+        ],
+        "relative_power": 83584.00000000001
+      }
+    ]
+  },
+  {
+    "geometry_id": 173,
+    "scene_name": "exp_1684__tracer1.npz",
+    "source_npz_sha256": "4cabdff11fba64f6b74b224c74da30a4b0a860549af0eed44a1a376e8654ca7e",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.8599649667739868,
+      -0.5103530287742615
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          0.0,
+          228.0,
+          91.16,
+          98.16
+        ],
+        "relative_power": 333500.16000000003
+      }
+    ]
+  },
+  {
+    "geometry_id": 174,
+    "scene_name": "exp_1692__tracer1.npz",
+    "source_npz_sha256": "48c9d5db1f8cd96638e92965b6ff165e2576381755163ac9665dbbb7e52e8eff",
+    "dir_k": 0,
+    "tracer": 1,
+    "pressure_gradient_direction_xy": [
+      -0.9084293842315674,
+      -0.4180383086204529
+    ],
+    "boxes": [
+      {
+        "bounds_m": [
+          99.59,
+          106.59,
+          28.0,
+          122.0
+        ],
+        "relative_power": 1846370.56
+      },
+      {
+        "bounds_m": [
+          76.0,
+          148.0,
+          239.59,
+          246.59
+        ],
+        "relative_power": 105315.84000000001
+      },
+      {
+        "bounds_m": [
+          90.0,
+          142.0,
+          161.61,
+          168.61
+        ],
+        "relative_power": 76061.44
+      }
+    ]
+  }
+]

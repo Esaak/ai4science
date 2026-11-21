@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Стационарный гауссов baseline</title>
+<style>
+:root {
+  --bg: #fdfdfc;
+  --fg: #1d1d1f;
+  --muted: #6b6b70;
+  --rule: #e3e3e0;
+  --code-bg: #f4f4f2;
+  --accent: #2f5d8a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --fg: #e7e7e9;
+    --muted: #9a9aa1;
+    --rule: #2c2f36;
+    --code-bg: #21242a;
+    --accent: #7cb0e0;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+main {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+}
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.25;
+  margin: 2.2em 0 0.6em;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: 2rem; margin-top: 0; }
+h2 { font-size: 1.45rem; padding-bottom: 0.25em; border-bottom: 1px solid var(--rule); }
+h3 { font-size: 1.2rem; }
+h4 { font-size: 1.05rem; }
+p, ul, ol, blockquote, pre, table { margin: 0 0 1.1em; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+a:hover { border-bottom-color: var(--accent); }
+ul, ol { padding-left: 1.6em; }
+li { margin: 0.25em 0; }
+li > p { margin: 0.25em 0; }
+blockquote {
+  margin-left: 0;
+  padding: 0.2em 1em;
+  color: var(--muted);
+  border-left: 3px solid var(--rule);
+}
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--code-bg);
+  padding: 1em 1.15em;
+  border-radius: 8px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.86em; }
+table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--rule); padding: 0.45em 0.75em; text-align: left; }
+th { background: var(--code-bg); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5em 0; }
+img { max-width: 100%; height: auto; }
+math { font-size: 1.08em; }
+math[display="block"] { display: block; margin: 1.2em 0; text-align: center; }
+.math-display-wrap { overflow-x: auto; margin: 1.2em 0; }
+.math-display-wrap math[display="block"] { margin: 0; }
+.math-error { color: #b3261e; font-family: monospace; }
+.doc-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+.doc-meta code { background: none; padding: 0; }
+</style>
+</head>
+<body>
+<main>
+<div class="doc-meta">source: <code>src/baseline.md</code></div>
+<h1>Стационарный гауссов baseline</h1>
+<h2>Назначение и область применимости</h2>
+<p>Модель строит гауссово поле на заданной высоте для оценки центра шлейфа. Для всех источников в сцене задано одно направление переноса. Земля представлена зеркальным источником, а общая маска при сравнении исключает ячейки внутри зданий.</p>
+<h2>Исходные данные и геометрия</h2>
+<p>Параметры заданы в конфигурации и допущениях A1–A7. Координаты берутся из верификатора ДЗ2. <a href="../experiment/gaussian_config.json">Конфигурация</a> · <a href="../research/problem.md">Протокол</a> · <a href="../checks/check_hw2.py">Верификатор</a></p>
+<ul>
+<li>Высота источника 4 м соответствует середине слоя эмиссии 0–8 м. Мощность каждого бокса сохраняется.</li>
+<li>Рецепторы на высоте 3 м (слой Z1).</li>
+<li>Сетка 128 × 128 с шагом Δ = 2 м.</li>
+<li>Центры ячеек имеют координаты <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>j</mi><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mi>&#x00394;</mi></mrow></math> по X (столбцы) и <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mi>&#x00394;</mi></mrow></math> по Y (строки).</li>
+</ul>
+<h2>Ширины рассеяния и происхождение параметров</h2>
+<p>Используются городские формулы Briggs класса D из руководства US EPA (1995), ISC3, том II, EPA-454/B-95-003b, таблицы 1-3 и 1-4, печатная с. 1-19 (страница PDF 32).</p>
+<div class="math-display-wrap"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003C3;</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>0.16</mn><mspace width="0.167em" /><mi>a</mi></mrow><mrow><msqrt><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>0.0004</mn><mspace width="0.167em" /><mi>a</mi></mrow></msqrt></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>&#x003C3;</mi><mi>z</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>0.14</mn><mspace width="0.167em" /><mi>a</mi></mrow><mrow><msqrt><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>0.0003</mn><mspace width="0.167em" /><mi>a</mi></mrow></msqrt></mrow></mfrac><mo>&#x0002E;</mo></mrow></math></div>
+<p>Здесь <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math> и ширины — в метрах. Коэффициенты 0.16 и 0.14 безразмерны, 0.0004 и 0.0003 — в обратных метрах. Выбор класса D для этой задачи утверждён в A6. <a href="https://gaftp.epa.gov/AIR/aqmg/SCRAM/models/other/isc3/isc3v2.pdf#page=32">Таблицы EPA</a> · <a href="../lit/lit.md">Указатель литературы</a></p>
+<p>Минимальная дистанция <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>a</mi><mrow><mo>min</mo></mrow></msub><mo>&#x0003D;</mo><mn>1</mn></mrow></math> м — это регуляризация протокола, равная половине шага сетки. Она применяется только к аргументу ширин и только для вкладов с положительным расстоянием по ветру.</p>
+<h2>Логика <code>src/gaussian_baseline.py</code></h2>
+<p>Поле строится из отдельных элементов источника <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>s</mi></msub><mo>&#x0002C;</mo><mspace width="0.167em" /><msub><mi>y</mi><mi>s</mi></msub><mo>&#x0002C;</mo><mspace width="0.167em" /><msub><mi>Q</mi><mi>s</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>. <a href="gaussian_baseline.py">Гауссово ядро</a> · <a href="../experiment/compare_centroids.html">Подготовка элементов</a></p>
+<ol>
+<li>
+<p>Из направления градиента давления <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>g</mi><mi>x</mi></msub><mo>&#x0002C;</mo><msub><mi>g</mi><mi>y</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math> получаем единичный вектор переноса <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>t</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>g</mi><mo>&#x0002F;</mo><mo>&#x02016;</mo><mi>g</mi><mo>&#x02016;</mo></mrow></math> и поперечный вектор <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><msub><mi>t</mi><mi>y</mi></msub><mo>&#x0002C;</mo><mspace width="0.167em" /><msub><mi>t</mi><mi>x</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>.</p>
+</li>
+<li>
+<p>Смещение от источника к рецептору проецируем на <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>t</mi></mrow></math> и <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math>, получая расстояния <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BE;</mi></mrow></math> вдоль переноса и <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi></mrow></math> поперёк.</p>
+</li>
+<li>
+<p>При <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BE;</mi><mo>&#x02264;</mo><mn>0</mn></mrow></math> вклад нулевой.</p>
+</li>
+<li>
+<p>При <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BE;</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math> рассчитываем ширины при <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mo>max</mo><mo stretchy="false">&#x00028;</mo><mi>&#x003BE;</mi><mo>&#x0002C;</mo><msub><mi>a</mi><mrow><mo>min</mo></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math> и вычисляем вклад элемента <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>W</mi><mi>s</mi></msub></mrow></math>.</p>
+<div class="math-display-wrap"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>W</mi><mi>s</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>Q</mi><mi>s</mi></msub></mrow><mrow><mn>2</mn><mi>&#x003C0;</mi><mspace width="0.167em" /><msub><mi>&#x003C3;</mi><mi>y</mi></msub><mspace width="0.167em" /><msub><mi>&#x003C3;</mi><mi>z</mi></msub></mrow></mfrac><mspace width="0.167em" /><mi>exp</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mo>&#x02212;</mo><mfrac><mrow><msup><mi>&#x003B7;</mi><mn>2</mn></msup></mrow><mrow><mn>2</mn><msubsup><mi>&#x003C3;</mi><mi>y</mi><mn>2</mn></msubsup></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><mi>exp</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mo>&#x02212;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>z</mi><mi>r</mi></msub><mo>&#x02212;</mo><msub><mi>z</mi><mi>s</mi></msub><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msubsup><mi>&#x003C3;</mi><mi>z</mi><mn>2</mn></msubsup></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002B;</mo><mi>exp</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mo>&#x02212;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>z</mi><mi>r</mi></msub><mo>&#x0002B;</mo><msub><mi>z</mi><mi>s</mi></msub><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msubsup><mi>&#x003C3;</mi><mi>z</mi><mn>2</mn></msubsup></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x0002E;</mo></mrow></math></div>
+</li>
+<li>
+<p>Суммируем вклады <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>W</mi><mi>s</mi></msub></mrow></math> всех элементов источника.</p>
+</li>
+</ol>
+<p>Первый вертикальный член описывает прямой источник, второй — зеркальный источник под поверхностью. Константа <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>&#x003C0;</mi></mrow></math> и коэффициент <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>2</mn></mrow></math> в показателях следуют из гауссовой формулы. Форма взята из EPA §1.1.1 (1-1) и §1.1.6.1 (1-50), откуда взят член отражения от земли. §1.2.3 служит основой площадной постановки. В этой реализации интеграл по площади приближается суммой по элементам сетки. <a href="https://gaftp.epa.gov/AIR/aqmg/SCRAM/models/other/isc3/isc3v2.pdf">Руководство EPA</a></p>
+<p>Множитель <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mi>U</mi></mrow></math> сокращается при вычислении взвешенного центра, поскольку положительная скорость переноса <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>U</mi></mrow></math> принята общей для сцены. На центр влияют относительные веса источников. Поле <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>W</mi></mrow></math> используется для оценки центра.</p>
+<h2>Синтетические проверки</h2>
+<p>Синтетический набор проверяет ширины на 100 м, нулевые вклады против ветра и на <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BE;</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, симметрию, отражение на земле, аддитивность, пропорциональность при масштабировании веса и действие отсечки в ближней зоне.</p>
+
+</main>
+</body>
+</html>

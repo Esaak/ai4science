@@ -1,0 +1,16 @@
+{
+  "csv_sha256": "e92ec7854be8cac532d5cd01289c3816cd5a3717e314a823f90763c25f835185",
+  "inputs": {
+    "experiment/gaussian_config.json": "7aeeec78cd3861a16ea20c1de7ed960e689f1894af18ec7f1de748d9b503290e",
+    "experiment/gaussian_inputs.json": "6836f373525951f5923fb1647f6991f3ee79087c9700bbe5a477432338171e50",
+    "fixtures/hw2/manifest.json": "d418ccef5a20afc3cfd3b873fdf5c5d29110a40de0a9f8961bd5fe4ec3b1a05d",
+    "fixtures/hw2/plumes.npz": "79808ff2af94573e891754b5f52b8578afff9519788a2611d52d5bce7f3cab3c"
+  },
+  "modules": {
+    "checks/check_hw2.py": "0f6b25470f226f44a35faa836338dc12d83b9f77fbf93f7f95e9a85357bfe64b",
+    "experiment/compare_centroids.py": "01e257dc6941648e524556e7c995a42f7ca7e16a76448cdd223b3d8da942b793",
+    "src/gaussian_baseline.py": "a877f3b8f469cded787f0400fb1dea455d10d0117f5740f3e98ae6846201710a"
+  },
+  "numpy_version": "2.5.4",
+  "python_version": "3.14.4"
+}

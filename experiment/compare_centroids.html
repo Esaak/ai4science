@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Парное сравнение ошибок центра шлейфа</title>
+<style>
+:root {
+  --bg: #fdfdfc;
+  --fg: #1d1d1f;
+  --muted: #6b6b70;
+  --rule: #e3e3e0;
+  --code-bg: #f4f4f2;
+  --accent: #2f5d8a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --fg: #e7e7e9;
+    --muted: #9a9aa1;
+    --rule: #2c2f36;
+    --code-bg: #21242a;
+    --accent: #7cb0e0;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+main {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+}
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.25;
+  margin: 2.2em 0 0.6em;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: 2rem; margin-top: 0; }
+h2 { font-size: 1.45rem; padding-bottom: 0.25em; border-bottom: 1px solid var(--rule); }
+h3 { font-size: 1.2rem; }
+h4 { font-size: 1.05rem; }
+p, ul, ol, blockquote, pre, table { margin: 0 0 1.1em; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+a:hover { border-bottom-color: var(--accent); }
+ul, ol { padding-left: 1.6em; }
+li { margin: 0.25em 0; }
+li > p { margin: 0.25em 0; }
+blockquote {
+  margin-left: 0;
+  padding: 0.2em 1em;
+  color: var(--muted);
+  border-left: 3px solid var(--rule);
+}
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--code-bg);
+  padding: 1em 1.15em;
+  border-radius: 8px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.86em; }
+table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--rule); padding: 0.45em 0.75em; text-align: left; }
+th { background: var(--code-bg); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5em 0; }
+img { max-width: 100%; height: auto; }
+math { font-size: 1.08em; }
+math[display="block"] { display: block; margin: 1.2em 0; text-align: center; }
+.math-display-wrap { overflow-x: auto; margin: 1.2em 0; }
+.math-display-wrap math[display="block"] { margin: 0; }
+.math-error { color: #b3261e; font-family: monospace; }
+.doc-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+.doc-meta code { background: none; padding: 0; }
+</style>
+</head>
+<body>
+<main>
+<div class="doc-meta">source: <code>experiment/compare_centroids.md</code></div>
+<h1>Парное сравнение ошибок центра шлейфа</h1>
+<h2>Назначение</h2>
+<p>Скрипт <code>compare_centroids.py</code> связывает результаты LES и DL с гауссовым baseline и даёт одну строку ошибок на сцену. <a href="compare_centroids.py">Скрипт</a> · <a href="../research/problem.md">Постановка задачи</a> · <a href="../METHOD.md">Методика ДЗ2</a> · <a href="../src/baseline.html">Гауссов baseline</a></p>
+<h2>Входы</h2>
+<ul>
+<li>Для сравнения из <code>../fixtures/hw2/plumes.npz</code> берутся массивы <code>geometry_id</code>, <code>scene_name</code>, <code>les</code>, <code>current</code> (поле DL) и <code>valid</code>.</li>
+<li><code>../fixtures/hw2/manifest.json</code> — SHA-256 архива и исходных сцен.</li>
+<li><code>gaussian_inputs.json</code> — геометрия и относительные мощности боксов, <code>g</code> из первых двух компонент <code>wind</code>, которые задают направление градиента давления, ключи сцены, <code>dir_k</code>, <code>tracer</code>, SHA-256 оригинала.</li>
+<li><code>gaussian_config.json</code> — протокол, включая высоты, отсечку и выбор слоя Z1 (индекс слоя 0).</li>
+</ul>
+<p>Источник боксов — <code>meta.source_boxes</code>, мощности — <code>(x1 − x0) × (y1 − y0)² × 8 м × meta.emis_coeff</code>. Входы подготовлены отдельно. Их происхождение и проверка растра мощности описаны в инструкции к эксперименту. <a href="README.md#%D0%B2%D1%85%D0%BE%D0%B4%D1%8B">Описание входов</a></p>
+<h2>Порядок работы</h2>
+<p>Сначала выполняются синтетические проверки ядра и разбиения. Затем <code>verify_archive</code> из <code>../checks/check_hw2.py</code> проверяет хеш сохранённого архива, схему и массивы. Далее скрипт индексирует оба набора по паре <code>(geometry_id, scene_name)</code>, проверяет дубликаты и точное совпадение множеств ключей, а у всех сцен проверяет настройки (<code>dir_k=0</code> и <code>tracer=1</code>) и хеши исходных сцен по манифесту. В сравнении 25 сцен с <code>geometry_id</code> 150–174. Сортировка выполняется по паре ключей.</p>
+<h2>Построение гауссова поля</h2>
+<p>Границы ячеек строятся из <code>X</code> и <code>Y</code> с отступом на половину шага. Каждый бокс пересекается с ячейками сетки, включая частичные пересечения. Элемент в центре пересечения получает вес <code>Q_бокс * A_пересечения / A_бокса</code>. Сумма весов элементов равна мощности бокса. Вклады разных боксов суммируются.</p>
+<p>Центр, взвешенный по полю, вычисляется как</p>
+<p><code>c = Σ(r · C) / Σ(C)</code></p>
+<p>по валидным ячейкам, где общая площадь ячейки сокращается. Один и тот же <code>valid</code> в слое Z1 применяется к трём полям. Вычисления выполняются в float64. Скрипт проверяет конечность и неотрицательность гауссовых весов, положительную конечную сумму по маске и конечность ошибок.</p>
+<h2>Метрики</h2>
+<p>Используются <code>compute_concentration_center</code> и <code>euclidean_error</code> из верификатора. <code>e_DL</code> и <code>e_Gaussian</code> — евклидовы расстояния до центра LES в метрах. Разность <code>d = e_Gaussian − e_DL</code>. При <code>d &gt; 0</code> меньше ошибка DL, при <code>d &lt; 0</code> меньше ошибка Gaussian.</p>
+<h2>Запуск</h2>
+<p>Команда из корня репозитория</p>
+<pre><code class="language-bash">.venv/bin/python -m experiment.compare_centroids
+</code></pre>
+<p><code>--pilot</code> печатает первую отсортированную сцену и её сумму гауссовых весов по маске без записи. <code>--output-dir PATH</code> выбирает каталог вывода. Локальный запуск использует сохранённые входы.</p>
+<h2>Выходные файлы</h2>
+<p>По умолчанию пишутся <a href="results/paired_errors.csv">paired_errors.csv</a> и <a href="results/provenance.json">provenance.json</a>. CSV содержит <code>geometry_id,scene_name,e_DL,e_Gaussian,d</code>. Ошибки и разность записываются с 12 десятичными знаками. <code>provenance.json</code> содержит SHA-256 CSV, входов и трёх Python-файлов, версии Python и NumPy. Файлы готовятся во временном каталоге и заменяются по отдельности.</p>
+<h2>Границы</h2>
+<p>Агрегирование ошибок и статистический вывод относятся к следующему шагу.</p>
+
+</main>
+</body>
+</html>
