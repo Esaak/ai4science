@@ -1,0 +1,147 @@
+version: "0.1"
+scope: "Каркас ветки week10-paper; сцены ДЗ2 geometry_id 150-174"
+updated: "2026-11-21"
+language: "ru"
+
+classes:
+  - id: Scene
+    label: "Сцена"
+    description: "Фиксированная комбинация городской планировки, направления ветра, трассера и слоя."
+    key_properties: ["geometry_id", "dir_k", "tracer", "layer"]
+    identity: "geometry_id in 150..174, dir_k=0, tracer=1, layer=Z1"
+    bound_to: "fixtures/hw2/plumes.npz: geometry_id, scene_name"
+
+  - id: Geometry
+    label: "Городская планировка"
+    description: "Поле высот зданий, задающее препятствия и общую валидную маску ячеек."
+    key_properties: ["geometry_id", "building_height"]
+    bound_to: "valid mask derived from building heights; source: pipeline3/core/metrics_full.py::build_layer_valid_masks"
+
+  - id: ValidMask
+    label: "Общая валидная маска"
+    description: "Булева маска ячеек, допустимых для расчёта центра, интеграла и ширины; одна для LES и всех предсказаний."
+    key_properties: ["shape", "dtype", "shared"]
+    bound_to: "fixtures/hw2/plumes.npz: valid[i, 0, :, :]"
+
+  - id: ConcentrationField
+    label: "Поле концентрации"
+    description: "Неотрицательное поле концентрации PM2.5 на слое Z1 размером 128x128."
+    key_properties: ["shape", "layer", "units", "nonnegative"]
+    bound_to: "fixtures/hw2/plumes.npz: les, current, baseline; shape (25, 4, 128, 128), Z1 = index 0"
+
+  - id: DispersionModel
+    label: "Модель рассеяния"
+    description: "Источник поля концентрации для данной сцены."
+    subclasses: ["LESReference", "NeuralSurrogate", "GaussianBaseline"]
+    bound_to: "current = combined_family_ft_best; baseline in paper = stationary Gaussian baseline (to be implemented)"
+
+  - id: PlumeCentroid
+    label: "Центр шлейфа"
+    description: "Взвешенное концентрацией среднее координат центров валидных ячеек."
+    key_properties: ["x_c", "y_c", "defined_if_nonzero_sum"]
+    bound_to: "checks/check_hw2.py::compute_concentration_center"
+
+  - id: CentroidError
+    label: "Ошибка центра"
+    description: "Евклидово расстояние между центром предсказания и центром LES, в метрах."
+    key_properties: ["e_DL", "e_Gaussian", "units_m"]
+    bound_to: "checks/check_hw2.py metrics; planned experiment/ comparison code"
+
+  - id: PairedComparison
+    label: "Парное сравнение"
+    description: "Сравнение двух моделей на одних и тех же 25 сценах с парной разностью ошибок."
+    key_properties: ["scene_ids", "d", "same_mask", "same_indices"]
+    bound_to: "planned experiment/ and src/ code; scene ids from fixtures/hw2/plumes.npz"
+
+  - id: BootstrapInterval
+    label: "Bootstrap-интервал"
+    description: "Квантильный 95% интервал парного bootstrap по сценам, описательная неопределённость."
+    key_properties: ["n_reps", "quantiles", "seed", "method"]
+    bound_to: "src/hw2_uncertainty.py (precedent); planned paper analysis"
+
+  - id: ScientificAssumption
+    label: "Научное допущение"
+    description: "Физическое или методическое допущение, которое до подтверждения автором имеет статус proposed."
+    key_properties: ["id", "statement", "status", "confirmer", "evidence"]
+    bound_to: "research/problem.md, раздел «Статус допущений»"
+
+  - id: Experiment
+    label: "Эксперимент"
+    description: "Парный вычислительный эксперимент на 25 фиксированных сценах с общей маской и единым протоколом."
+    key_properties: ["scenes", "models", "primary_endpoint", "descriptive_endpoints"]
+    bound_to: "research/problem.md; planned experiment/ code"
+
+relations:
+  - id: scene_has_geometry
+    subject: Scene
+    predicate: hasGeometry
+    object: Geometry
+  - id: scene_has_field
+    subject: Scene
+    predicate: hasField
+    object: ConcentrationField
+  - id: field_produced_by
+    subject: ConcentrationField
+    predicate: producedBy
+    object: DispersionModel
+  - id: field_restricted_by
+    subject: ConcentrationField
+    predicate: restrictedBy
+    object: ValidMask
+  - id: centroid_computed_from
+    subject: PlumeCentroid
+    predicate: computedFrom
+    object: ConcentrationField
+  - id: error_compares_centroids
+    subject: CentroidError
+    predicate: compares
+    object: PlumeCentroid
+  - id: experiment_uses_scenes
+    subject: Experiment
+    predicate: usesScenes
+    object: Scene
+  - id: experiment_has_assumption
+    subject: Experiment
+    predicate: gatedBy
+    object: ScientificAssumption
+
+rules:
+  - id: R1_centroid_weighted_mean
+    statement: "Центр поля — среднее координат центров ячеек, взвешенное концентрацией, только по валидным ячейкам."
+    formal: "x_c = sum(c_ij * x_ij) / sum(c_ij); y_c = sum(c_ij * y_ij) / sum(c_ij)"
+    enforced_by: "checks/check_hw2.py::compute_concentration_center"
+
+  - id: R2_shared_mask
+    statement: "LES, суррогат и гауссов baseline используют одну и ту же валидную маску сцены; маска не зависит от модели."
+    formal: "mask_LES = mask_DL = mask_Gaussian = valid[i, 0]"
+    enforced_by: "checks/check_hw2.py mask checks; experiment protocol"
+
+  - id: R3_euclidean_error
+    statement: "Ошибка модели — евклидово расстояние между её центром и центром LES в метрах."
+    formal: "e_model = sqrt((x_c,LES - x_c,model)^2 + (y_c,LES - y_c,model)^2)"
+    enforced_by: "checks/check_hw2.py metrics; planned experiment code"
+
+  - id: R4_paired_same_scenes
+    statement: "Обе модели оцениваются на одном и том же наборе из 25 сцен; парная разность считается по сцене."
+    formal: "d_i = e_Gaussian,i - e_DL,i for i in 150..174"
+    enforced_by: "planned experiment/ code"
+
+  - id: R5_bootstrap_ci
+    statement: "95% интервал — квантильный парный bootstrap по 25 индексам с возвращением; одни и те же индексы применяются обеим моделям."
+    formal: "CI = quantile(bootstrap_mean_d, [0.025, 0.975], method='linear')"
+    enforced_by: "src/hw2_uncertainty.py precedent; planned paper analysis"
+
+  - id: R6_zero_sum_undefined
+    statement: "Если сумма концентрации по валидным ячейкам равна нулю, центр не определён; сцена не исключается молча."
+    formal: "if sum(c_ij over valid) == 0 then centroid undefined and run stops"
+    enforced_by: "checks/check_hw2.py zero-integral checks and test_zero_field"
+
+  - id: R7_assumption_gate
+    statement: "Гауссов baseline не порождает числа для статьи, пока автор не подтвердил все семь физических допущений."
+    formal: "status(all assumptions) == confirmed before baseline results"
+    enforced_by: "AGENTS.md; research/problem.md; STATUS.md"
+
+  - id: R8_no_acceptance_threshold
+    statement: "Для нового метода не вводятся пороги приёмки; сравнение остаётся описательным и парным."
+    formal: "no decision rule on e_DL or e_Gaussian in paper protocol"
+    enforced_by: "research/problem.md; WRITING.md"

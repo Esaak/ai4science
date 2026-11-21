@@ -1,0 +1,242 @@
+\documentclass{article}
+
+% ---------------------------------------------------------------------------
+% Course template, anonymous submission version.
+% The default option set of ai4science_ysda2026 prints "Anonymous authors",
+% hides affiliations, correspondence and acknowledgements, and leaves the PDF
+% author field empty; there is no local switch for this. The final version is
+% produced by the author with the [final] option, which is not used here.
+% The course style is checked in alongside this source when the paper is saved.
+% ---------------------------------------------------------------------------
+\usepackage[english]{ai4science_ysda2026}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+\icmltitlerunning{Urban Plume Centroid Prediction}
+
+\begin{document}
+
+\twocolumn[
+
+  \icmltitle{Urban Plume Centroid Prediction:\\
+    A Neural Surrogate versus a Gaussian Baseline}
+
+  \begin{icmlauthorlist}
+    \icmlauthor{Anonymous authors}{}
+  \end{icmlauthorlist}
+
+  \icmlkeywords{urban dispersion, plume centroid, neural surrogate,
+    Gaussian model, large-eddy simulation}
+
+  \vskip 0.3in
+]
+
+\printAffiliationsAndNotice{}
+
+\begin{abstract}
+The concentration centroid summarizes the position of an urban pollutant plume.
+We specify a paired comparison
+of a neural surrogate and a stationary Gaussian baseline against large-eddy
+simulation (LES) over 25 urban layouts. The primary endpoint is the
+scene-averaged difference between the Gaussian and surrogate centroid errors,
+reported with a 95\% paired bootstrap interval; medians and the number of scenes
+within 20\,m are descriptive. The Gaussian baseline follows the ISC3 formulation,
+and its physical assumptions are subject to author confirmation before any
+results are produced. This version is a scaffold: no numerical result is
+reported.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Neural surrogates can reproduce urban dispersion fields at a fraction of the cost
+of large-eddy simulation, but aggregate pointwise scores can hide a displaced
+plume. A surrogate that smooths or shifts the plume may still score well on
+pointwise metrics while misrepresenting where the concentration is. The
+concentration-weighted centroid is a compact, physically interpretable summary of
+plume position and is therefore a useful comparison target.
+
+This paper asks a narrow question: on the same urban layouts and with the same
+valid-cell mask, how does the centroid error of the neural surrogate
+\texttt{combined\_family\_ft\_best} compare with that of a stationary Gaussian
+baseline, using LES as the reference? The comparison is descriptive and paired;
+no acceptance threshold is defined for the new method.
+
+The study builds on the HW2 verification package. The data, the existing
+verifier, and the archive checksums are preserved unchanged. The Gaussian
+baseline is a new component and is specified from the ISC3 formulation
+\cite{epa1995}; comparison with a Gaussian approach and treatment of buildings
+follow the precedent of \cite{mendil2022}, with a different emission regime.
+
+\section{Data and Experimental Design}
+\label{sec:data}
+
+The experiment uses 25 distinct urban layouts with
+\texttt{geometry\_id} from 150 to 174, wind-direction index \texttt{dir\_k}=0,
+tracer index 1, and the near-surface layer Z1 at 3\,m. Fields lie on a
+$128\times128$ grid with a 2\,m spacing over a $256\times256$\,m domain.
+A single valid-cell mask, derived from building heights, is shared by LES and by
+both predictions; no concentration threshold is applied.
+
+The inputs are the archived LES and surrogate fields in
+\texttt{fixtures/hw2/plumes.npz}, with checksums recorded in
+\texttt{fixtures/hw2/manifest.json}. The existing verifier is run as
+\texttt{.venv/bin/python checks/check\_hw2.py}. Only the Z1 layer is used.
+All 25 scenes are evaluated; a scene with zero concentration sum over the valid
+mask stops the run rather than being silently dropped.
+
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Concentration centroid}
+
+For a field $c_{ij}$ and valid mask $M$, the centroid is the
+concentration-weighted mean of the cell-centre coordinates:
+\begin{equation}
+  \begin{aligned}
+    x_c &= \frac{\sum_{(i,j)\in M} c_{ij}\,x_{ij}}
+                {\sum_{(i,j)\in M} c_{ij}}, \\
+    y_c &= \frac{\sum_{(i,j)\in M} c_{ij}\,y_{ij}}
+                {\sum_{(i,j)\in M} c_{ij}}.
+  \end{aligned}
+  \label{eq:centroid}
+\end{equation}
+The same formula is applied to LES, to the neural surrogate, and to the Gaussian
+baseline.
+
+\subsection{Centroid error}
+
+For model $m$, the error is the Euclidean distance to the LES centroid:
+\begin{equation}
+  e_m = \sqrt{\left(x_c^{\mathrm{LES}} - x_c^{m}\right)^2
+            + \left(y_c^{\mathrm{LES}} - y_c^{m}\right)^2}.
+  \label{eq:error}
+\end{equation}
+
+\subsection{Neural surrogate}
+
+The surrogate is the fixed model \texttt{combined\_family\_ft\_best}; its fields
+are read from the archive. This study does not retrain or re-run inference from
+checkpoints.
+
+\subsection{Gaussian baseline}
+
+The baseline is a stationary Gaussian dispersion model in the spirit of ISC3:
+a point-source kernel \cite[\S1.1.1, Eq.~(1-1)]{epa1995}, ground reflection
+\cite[\S1.1.6.1, Eq.~(1-50)]{epa1995}, urban Briggs coefficients
+\cite[Tables 1-3 and 1-4]{epa1995}, and an area-source representation
+\cite[\S1.2.3]{epa1995}. Emission height and receptor height are kept as separate
+quantities: the emission height belongs to the source configuration of a scene,
+whereas the receptor height is fixed by the evaluation layer at Z1 $=3$\,m and is
+not a free parameter. The source composition, release height, relative element
+weights, axis orientation, transport direction, neutral stability class~D, and
+near-field treatment are proposed assumptions that must be confirmed against one
+scene on the simulation server before results are generated.
+
+\subsection{Paired comparison}
+
+Both models are evaluated on the same 25 scenes. The paired difference is
+\begin{equation}
+  d_g = e_{\mathrm{Gaussian},g} - e_{\mathrm{DL},g},
+  \label{eq:paired}
+\end{equation}
+so that positive values indicate a smaller error for the neural surrogate.
+The primary endpoint is the scene-averaged $\bar d$. Its 95\% interval is
+obtained by a paired bootstrap over scene indices with replacement, using the
+same resampled indices for both models; the number of replicates and the seed are
+fixed and recorded before the run. Medians and the number of scenes with error at
+most 20\,m are reported as descriptive quantities only.
+
+Per-scene errors are tabulated with \texttt{geometry\_id} and
+\texttt{scene\_name} so that each value is traceable to a scene, and are also
+shown as a scatter plot with the Gaussian error on the $x$-axis, the surrogate
+error on the $y$-axis, and the diagonal of equal errors as a reference. Points
+above the diagonal indicate a smaller Gaussian error for that scene.
+
+\section{Results}
+\label{sec:results}
+
+This section is a placeholder. Numerical results are intentionally omitted from
+this scaffold. They will be inserted only after the Gaussian baseline assumptions
+are confirmed and the experiment is verified by the author. The planned content
+is the paired table over \texttt{geometry\_id} and \texttt{scene\_name}, the
+scatter plot of per-scene errors, and the scene-averaged difference with its
+95\% paired bootstrap interval. No acceptance threshold is defined for the new
+method.
+
+\section{Discussion}
+\label{sec:discussion}
+
+The paired design isolates the difference between the two model families on
+identical scenes, masks, and reference fields. A positive average difference
+would mean that the Gaussian baseline is farther from LES than the surrogate;
+a negative one would mean the opposite. Because the interval is estimated from
+25 fixed layouts, the discussion must separate the estimated difference from
+claims about other winds, tracers, or layers.
+
+\section{Limitations}
+\label{sec:limitations}
+
+The study covers one wind-direction index, one tracer, and one near-surface
+layer. The LES reference is itself a model, not ground truth for all
+conditions. The Gaussian baseline is stationary and cannot reproduce unsteady
+LES dynamics; the comparison is therefore limited to centroids on Z1. The
+archived fields are saved predictions, not a fresh inference from checkpoints.
+Conclusions do not transfer to other geometries, winds, tracers, or layers.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This section is a placeholder. The scaffold fixes the data, the metric, and the
+statistical protocol for a paired comparison of plume centroids between the
+neural surrogate and a stationary Gaussian baseline on 25 urban layouts.
+The author must confirm the baseline assumptions before the experiment and
+verify the numerical results before drawing conclusions.
+
+\section*{Reproducibility}
+
+The HW2 verifier is run from the repository root as
+\texttt{.venv/bin/python checks/check\_hw2.py}; the archived fields and checksums
+are in \texttt{fixtures/hw2/}. The paper experiment will add its own command and
+output files under \texttt{experiment/} once the baseline is confirmed.
+
+\section*{Contributions}
+
+The author formulates the research question, approves the study assumptions,
+and is responsible for verifying the experiment and manuscript.
+
+\begin{aiusage}
+Initial manuscript scaffold and draft methods
+  & \generated{} & Goose, DeepSeek V4.1 Flash
+  & The author must check the draft against the study protocol and course
+    template. \\
+Description of the HW2 inputs
+  & \sourced{} & Goose, DeepSeek V4.1 Flash
+  & The author must check the description against the archive and its
+    manifest. \\
+\end{aiusage}
+
+\acknowledgements{The author acknowledges the HW2 verification package and the
+course infrastructure used to archive the fields.}
+
+\begin{thebibliography}{9}
+
+\bibitem{mendil2022}
+Mendil, Leirens, Armand, and Duchenne (2022).
+\emph{Hazardous atmospheric dispersion in urban areas: A Deep Learning
+approach for emergency pollution forecast}. Environmental Modelling \&
+Software, article 105387. DOI
+\href{https://doi.org/10.1016/j.envsoft.2022.105387}{10.1016/j.envsoft.2022.105387}.
+Sections 2.3.2--2.3.3 and 4.2.
+
+\bibitem{epa1995}
+US Environmental Protection Agency (1995).
+\emph{User's Guide for the Industrial Source Complex (ISC3) Dispersion Models,
+Volume II}. EPA-454/B-95-003b.
+Sections 1.1.1, 1.1.6.1, 1.2.3; Eqs.~(1-1) and (1-50); Tables 1-3 and 1-4.
+
+\end{thebibliography}
+
+\end{document}
