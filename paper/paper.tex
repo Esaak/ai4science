@@ -13,22 +13,26 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{microtype}
 
-\icmltitlerunning{Urban Plume Centroid Prediction}
+\input{results.tex}
+
+\icmltitlerunning{Predicting the Concentration-Weighted Plume Center}
 
 \begin{document}
 
 \twocolumn[
 
-  \icmltitle{Urban Plume Centroid Prediction:\\
-    A Neural Surrogate versus a Gaussian Baseline}
+  \icmltitle{Predicting the Concentration-Weighted Center of\\
+    Urban Pollutant Plumes: A Comparison of a Gaussian Model\\
+    and a Deep Learning Model}
 
   \begin{icmlauthorlist}
     \icmlauthor{Anonymous authors}{}
   \end{icmlauthorlist}
 
-  \icmlkeywords{urban dispersion, plume centroid, neural surrogate,
-    Gaussian model, large-eddy simulation}
+  \icmlkeywords{urban dispersion, concentration-weighted plume center,
+    deep learning surrogate, Gaussian model, large-eddy simulation}
 
   \vskip 0.3in
 ]
@@ -36,186 +40,184 @@
 \printAffiliationsAndNotice{}
 
 \begin{abstract}
-The concentration centroid summarizes the position of an urban pollutant plume.
-We specify a paired comparison
-of a neural surrogate and a stationary Gaussian baseline against large-eddy
-simulation (LES) over 25 urban layouts. The primary endpoint is the
-scene-averaged difference between the Gaussian and surrogate centroid errors,
-reported with a 95\% paired bootstrap interval; medians and the number of scenes
-within 20\,m are descriptive. The Gaussian baseline follows the ISC3 formulation
-with the assumptions fixed in the study protocol. This version is a scaffold:
-no numerical result is reported.
+The concentration-weighted plume center is the concentration-weighted mean of
+the cell coordinates and summarizes where a plume lies. We compare a simplified
+stationary Gaussian plume model, with Briggs urban class D dispersion widths,
+against a U-Net surrogate trained on large-eddy simulation (LES) concentration
+fields. On \NScenes{} urban layouts we measure, over the grid cells outside
+buildings at 3\,m above ground, the distance between each model center and the
+LES center. Averaged over layouts, the mean U-Net error is \MeanDiff\,m smaller
+than the Gaussian error, and the U-Net is closer on \NPositive{} of \NScenes{}
+layouts.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-Neural surrogates can reproduce urban dispersion fields at a fraction of the cost
-of large-eddy simulation, but aggregate pointwise scores can hide a displaced
-plume. A surrogate that smooths or shifts the plume may still score well on
-pointwise metrics while misrepresenting where the concentration is. The
-concentration-weighted centroid is a compact, physically interpretable summary of
-plume position and is therefore a useful comparison target.
+Neural surrogates reproduce urban dispersion fields far more cheaply than
+large-eddy simulation, but aggregate pointwise scores can hide a displaced
+plume: a surrogate that smooths or shifts a plume may still score well while
+misrepresenting where the concentration is. The concentration-weighted plume
+center is a compact summary of plume position.
 
-This paper asks a narrow question: on the same urban layouts and with the same
-valid-cell mask, how does the centroid error of the neural surrogate
-\texttt{combined\_family\_ft\_best} compare with that of a stationary Gaussian
-baseline, using LES as the reference? The comparison is descriptive and paired;
-no acceptance threshold is defined for the new method.
+We ask how the plume center error of the surrogate
+\texttt{combined\_family\_ft\_best} compares with that of a stationary Gaussian
+baseline on the same layouts and valid-cell mask, with LES as the reference; the
+comparison is paired and descriptive.
 
-The study builds on the HW2 verification package. The data, the existing
-verifier, and the archive checksums are preserved unchanged. The Gaussian
-baseline is a new component and is specified from the ISC3 formulation
-\cite{epa1995}; comparison with a Gaussian approach and treatment of buildings
-follow the precedent of \cite{mendil2022}, with a different emission regime.
+The Gaussian baseline is a simplified ISC3-based model
+\citep[\S1.1.1, Eq.~(1-1); \S1.1.6.1, Eq.~(1-50); \S1.2.3]{epa1995}, with a
+stationary point-source kernel, ground reflection, urban dispersion widths and
+an area-source representation of the road emission. A deep
+learning surrogate for emergency pollution forecast has been compared with a
+Gaussian approach in an urban setting \citep[\S2.3.2--2.3.3 and
+\S4.2]{mendil2022}, for a different emission regime; we use it as a
+methodological precedent and do not transfer its conclusions. Our contribution
+is a paired comparison on a fixed archive, a verifier for coordinate errors in
+the plume center, and a pipeline in which every number comes from one saved
+table.
 
-\section{Data and Experimental Design}
-\label{sec:data}
-
-The experiment uses 25 distinct urban layouts with
-\texttt{geometry\_id} from 150 to 174, wind-direction index \texttt{dir\_k}=0,
-tracer index 1, and the near-surface layer Z1 at 3\,m. Fields lie on a
-$128\times128$ grid with a 2\,m spacing over a $256\times256$\,m domain.
-A single valid-cell mask, derived from building heights, is shared by LES and by
-both predictions; no concentration threshold is applied.
-
-The inputs are the archived LES and surrogate fields in
-\texttt{fixtures/hw2/plumes.npz}, with checksums recorded in
-\texttt{fixtures/hw2/manifest.json}. The existing verifier is run as
-\texttt{.venv/bin/python checks/check\_hw2.py}. Only the Z1 layer is used.
-All 25 scenes are evaluated; a scene with zero concentration sum over the valid
-mask stops the run rather than being silently dropped.
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.74\textwidth]{../experiment/results/paper_figure.pdf}
+  \caption{Paired plume center errors and example fields at 3\,m.
+    (a) The \NScenes{} paired differences
+    $d_g=e_{\mathrm{Gaussian}}-e_{\mathrm{DL}}$, sorted by value, one point per
+    layout and coloured by sign; the two extreme layouts are labelled and the
+    mean difference is printed.
+    (b) LES, Gaussian baseline and surrogate fields for layout \MaxDiffScene{}
+    (largest positive difference) and layout \MinDiffScene{} (largest negative
+    difference). Buildings are grey, the LES center is a cross, the model center
+    a circle, and the error in metres is printed under each model map; the
+    colour scale is the cell fraction of the field sum, logarithmic and shared
+    by all six maps.}
+  \label{fig:paired}
+\end{figure*}
 
 \section{Methods}
 \label{sec:methods}
 
-\subsection{Concentration centroid}
+\subsection{Data and design}
 
-For a field $c_{ij}$ and valid mask $M$, the centroid is the
-concentration-weighted mean of the cell-centre coordinates:
+The experiment uses \NScenes{} layouts (\texttt{geometry\_id} 150--174), wind
+index \texttt{dir\_k}=0, tracer 1 and the near-surface layer Z1 at 3\,m, on a
+$128\times128$ grid with 2\,m spacing over $256\times256$\,m. One valid-cell
+mask derived from building heights excludes the cells that lie inside
+buildings at 3\,m and is identical for LES and for both predictions. The inputs
+are archived LES and surrogate fields with recorded checksums. All \NScenes{}
+scenes are evaluated; a scene with zero concentration sum under the mask stops
+the run.
+
+\subsection{Gaussian baseline}
+
+The baseline is a simplified ISC3-based stationary Gaussian model: a
+point-source kernel \citep[\S1.1.1, Eq.~(1-1)]{epa1995}, ground reflection
+\citep[\S1.1.6.1, Eq.~(1-50)]{epa1995}, urban Briggs coefficients
+\citep[App.~D]{briggs1973}, tabulated \citep[\S1.1.5.1, Tables 1-3 and 1-4]{epa1995},
+and an area-source representation
+\citep[\S1.2.3]{epa1995}. Each road box is split into area elements that
+preserve its emission, with the kernel at each element center. Emission
+from the 0--8\,m release layer is represented at 4\,m and the receptor is at
+3\,m; transport follows the negative pressure gradient of the scene. The
+baseline uses neutral class~D, a 1\,m lower bound on the downwind distance and
+zero contribution below it; these choices were fixed before the run.
+
+\subsection{Plume center and error}
+
+For a field $c_{ij}$ and valid mask $M$, the plume center is the
+concentration-weighted mean of the cell-center coordinates,
 \begin{equation}
   \begin{aligned}
     x_c &= \frac{\sum_{(i,j)\in M} c_{ij}\,x_{ij}}
                 {\sum_{(i,j)\in M} c_{ij}}, \\
     y_c &= \frac{\sum_{(i,j)\in M} c_{ij}\,y_{ij}}
-                {\sum_{(i,j)\in M} c_{ij}}.
+                {\sum_{(i,j)\in M} c_{ij}},
   \end{aligned}
   \label{eq:centroid}
 \end{equation}
-The same formula is applied to LES, to the neural surrogate, and to the Gaussian
-baseline.
-
-\subsection{Centroid error}
-
-For model $m$, the error is the Euclidean distance to the LES centroid:
+with $x_{ij}=(j+\tfrac12)\cdot2$\,m and $y_{ij}=(i+\tfrac12)\cdot2$\,m, applied to
+LES and to both models. For model $m$ the error is the Euclidean distance to the
+LES plume center,
 \begin{equation}
   e_m = \sqrt{\left(x_c^{\mathrm{LES}} - x_c^{m}\right)^2
             + \left(y_c^{\mathrm{LES}} - y_c^{m}\right)^2}.
   \label{eq:error}
 \end{equation}
 
-\subsection{Neural surrogate}
-
-The surrogate is the fixed model \texttt{combined\_family\_ft\_best}; its fields
-are read from the archive. This study does not retrain or re-run inference from
-checkpoints.
-
-\subsection{Gaussian baseline}
-
-The baseline is a stationary Gaussian dispersion model in the spirit of ISC3:
-a point-source kernel \cite[\S1.1.1, Eq.~(1-1)]{epa1995}, ground reflection
-\cite[\S1.1.6.1, Eq.~(1-50)]{epa1995}, urban Briggs coefficients
-\cite[Tables 1-3 and 1-4]{epa1995}, and an area-source representation
-\cite[\S1.2.3]{epa1995}. The baseline places the emission at 4\,m, the midpoint
-of the 0--8\,m release layer, and preserves the total emission of each source.
-The receptor height is fixed at Z1 $=3$\,m. The transport direction follows the
-negative pressure gradient for each scene. The baseline uses urban Briggs
-coefficients for neutral class~D and a 1\,m lower bound on the downwind
-distance used to compute the dispersion widths.
-
 \subsection{Paired comparison}
 
-Both models are evaluated on the same 25 scenes. The paired difference is
+Both models are evaluated on the same scenes, and the paired difference is
 \begin{equation}
   d_g = e_{\mathrm{Gaussian},g} - e_{\mathrm{DL},g},
   \label{eq:paired}
 \end{equation}
-so that positive values indicate a smaller error for the neural surrogate.
-The primary endpoint is the scene-averaged $\bar d$. Its 95\% interval is
-obtained by a paired bootstrap over scene indices with replacement, using the
-same resampled indices for both models; the number of replicates and the seed are
-fixed and recorded before the run. Medians and the number of scenes with error at
-most 20\,m are reported as descriptive quantities only.
+so that positive values indicate a smaller surrogate error; the reported
+quantity is the mean of $d_g$ over the layouts, and medians and the sign split
+are descriptive.
 
-Per-scene errors are tabulated with \texttt{geometry\_id} and
-\texttt{scene\_name} so that each value is traceable to a scene, and are also
-shown as a scatter plot with the Gaussian error on the $x$-axis, the surrogate
-error on the $y$-axis, and the diagonal of equal errors as a reference. Points
-above the diagonal indicate a smaller Gaussian error for that scene.
+\subsection{Verification and reproduction}
+
+A verifier runs synthetic tests on the plume center code (additivity, scale
+invariance, mask handling, a one-cell shift, a $90^\circ$ rotation, a zero field,
+a single cell, width invariance under a shift): seven came from the earlier
+version of the assignment, the current verifier holds eight, the eighth added
+with the width estimate. One
+test is a deliberate coordinate shift, with cells computed as
+$(\texttt{arange}+1)\cdot2$ instead of $(\texttt{arange}+\tfrac12)\cdot2$, a
+uniform 1\,m offset on both axes; it reports
+\texttt{I=400 centre=(91.0,71.0)} where \texttt{(90.0,70.0)} is expected and
+exits with code~1. Rerun on the corrected code, it passed once the half-cell
+offset was restored, and all eight tests pass. The verifier
+also checks the archived inputs (checksum, schema, geometry range, shapes, mask,
+non-zero sums), and one command reproduces the comparison from the repository
+root.
 
 \section{Results}
 \label{sec:results}
 
-This section is a placeholder. Numerical results will be inserted after the
-author verifies the experiment. The planned content
-is the paired table over \texttt{geometry\_id} and \texttt{scene\_name}, the
-scatter plot of per-scene errors, and the scene-averaged difference with its
-95\% paired bootstrap interval. No acceptance threshold is defined for the new
-method.
+Over the \NScenes{} layouts the mean paired difference is
+$\bar d=\MeanDiff$\,m, that is, the U-Net plume center is closer to the LES
+plume center on average. The sign is not uniform: $d_g>0$ on \NPositive{}
+layouts and $d_g<0$ on \NNegative{}. The medians are \MedianDL\,m for the
+surrogate and \MedianGauss\,m for the baseline.
 
-\section{Discussion}
-\label{sec:discussion}
-
-The paired design isolates the difference between the two model families on
-identical scenes, masks, and reference fields. A positive average difference
-would mean that the Gaussian baseline is farther from LES than the surrogate;
-a negative one would mean the opposite. Because the interval is estimated from
-25 fixed layouts, the discussion must separate the estimated difference from
-claims about other winds, tracers, or layers.
+Figure~\ref{fig:paired} shows the two extreme layouts. On layout
+\MaxDiffScene{} the Gaussian center lies far from the LES center while the
+surrogate center is close to it; on layout \MinDiffScene{} the surrogate center
+is the farther of the two. Panel~(a) ranks the \NScenes{} paired differences,
+coloured by sign; panel~(b) gives the fields of the two extremes at 3\,m, with
+buildings in grey, the LES center as a cross and the model center as a circle.
+All six maps share one logarithmic colour scale.
 
 \section{Limitations}
 \label{sec:limitations}
 
-The study covers one wind-direction index, one tracer, and one near-surface
-layer. The LES reference is itself a model, not ground truth for all
-conditions. The Gaussian baseline is stationary and cannot reproduce unsteady
-LES dynamics; the comparison is therefore limited to centroids on Z1. The
-archived fields are saved predictions, not a fresh inference from checkpoints.
-Conclusions do not transfer to other geometries, winds, tracers, or layers.
+The conclusions hold for \NScenes{} layouts at one wind index, one tracer and one
+height (3\,m); another wind direction, tracer or height would change the plume
+geometry. LES is a numerical reference, not ground truth.
+The baseline is one simplified ISC3-based parameterisation and the surrogate is
+the fixed archived model \texttt{combined\_family\_ft\_best}; another
+parameterisation or checkpoint could change the difference. The metric assesses plume position only, and a model can match the
+center while misplacing the spread or shape.
 
-\section{Conclusion}
-\label{sec:conclusion}
-
-This section is a placeholder. The scaffold fixes the data, the metric, and the
-statistical protocol for a paired comparison of plume centroids between the
-neural surrogate and a stationary Gaussian baseline on 25 urban layouts.
-The author will verify the numerical results before drawing conclusions.
-
-\section*{Reproducibility}
-
-The HW2 verifier is run from the repository root as
-\texttt{.venv/bin/python checks/check\_hw2.py}; the archived fields and checksums
-are in \texttt{fixtures/hw2/}. The paper experiment will add its own command and
-output files under \texttt{experiment/} once the baseline is confirmed.
-
-\section*{Contributions}
-
-The author formulates the research question, approves the study assumptions,
-and is responsible for verifying the experiment and manuscript.
-
-\begin{aiusage}
-Initial manuscript scaffold and draft methods
-  & \generated{} & Goose, DeepSeek V4.1 Flash
-  & The author must check the draft against the study protocol and course
-    template. \\
-Description of the HW2 inputs
-  & \sourced{} & Goose, DeepSeek V4.1 Flash
-  & The author must check the description against the archive and its
-    manifest. \\
+\begin{aiusage}[The manuscript, the experiment code and the figure were prepared
+  with an AI assistant and checked by rerunning the pipeline; author
+  verification of the text and numbers is pending.]
+  Manuscript scaffold, Methods and Results text
+    & \generated{} & Goose agent, DeepSeek V4.1 Flash
+    & Compared with the study protocol and the saved table; every number is a
+      macro generated from that table. \\
+  Gaussian kernel, paired analysis and figure code
+    & \generated{} & Goose agent, DeepSeek V4.1 Flash and Qwen 3.6 35B
+    & Eight synthetic tests, a pilot scene, and a byte-identical rerun from the
+      same inputs. \\
+  Related work
+    & \sourced{} & Literature coordinates recorded in the project
+    & Statements limited to the cited sections of the two references. \\
 \end{aiusage}
 
-\acknowledgements{The author acknowledges the HW2 verification package and the
-course infrastructure used to archive the fields.}
+\acknowledgements{The author acknowledges the course infrastructure used to
+archive the fields.}
 
 \begin{thebibliography}{9}
 
@@ -227,11 +229,22 @@ Software, article 105387. DOI
 \href{https://doi.org/10.1016/j.envsoft.2022.105387}{10.1016/j.envsoft.2022.105387}.
 Sections 2.3.2--2.3.3 and 4.2.
 
+\bibitem{briggs1973}
+Briggs, G.~A. (1973).
+\emph{Diffusion Estimation for Small Emissions. Preliminary Report}.
+Air Resources Atmospheric Turbulence and Diffusion Laboratory, NOAA,
+Oak Ridge, TN. TID-28289. DOI
+\href{https://doi.org/10.2172/5118833}{10.2172/5118833}.
+Appendices D and E.
+
 \bibitem{epa1995}
 US Environmental Protection Agency (1995).
 \emph{User's Guide for the Industrial Source Complex (ISC3) Dispersion Models,
 Volume II}. EPA-454/B-95-003b.
-Sections 1.1.1, 1.1.6.1, 1.2.3; Eqs.~(1-1) and (1-50); Tables 1-3 and 1-4.
+\href{https://gaftp.epa.gov/AIR/aqmg/SCRAM/models/other/isc3/isc3v2.pdf}{PDF:
+isc3v2.pdf}.
+Sections 1.1.1, 1.1.5.1, 1.1.6.1, 1.2.3; Eqs.~(1-1) and (1-50);
+Tables 1-3 and 1-4.
 
 \end{thebibliography}
 

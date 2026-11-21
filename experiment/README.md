@@ -64,3 +64,43 @@ out=$(mktemp -d)
 .venv/bin/python -m experiment.compare_centroids --output-dir "$out" && \
   .venv/bin/python -m experiment.analyze_pairs --input-dir "$out" --output-dir "$out"
 ```
+
+## Двухпанельный рисунок для статьи
+
+```bash
+.venv/bin/python -m experiment.plot_paper_figure
+```
+
+Команда сохраняет `results/paper_figure.pdf` шириной 6,75 дюйма. Слева
+показаны разности Gaussian − DL для всех 25 планировок в порядке
+возрастания. Справа — карты LES, Gaussian и DL на сценах с наибольшей
+положительной и отрицательной разностями (168 и 167). Все карты
+показывают одну область 256 × 256 м в слое Z1. Каждое поле нормировано
+на сумму по валидным ячейкам, цвета сопоставимы по общей логарифмической
+шкале. Модуль проверяет ошибки центров примеров по исходной таблице пар.
+
+## Сборка черновика статьи
+
+Из корня репозитория:
+
+```bash
+.venv/bin/python -m experiment.make_paper_numbers
+.venv/bin/python -m experiment.make_paper_numbers --check
+(cd paper && tectonic -X compile paper.tex)
+```
+
+Первая команда пишет макросы чисел в `../paper/results.tex` из сохранённых
+`results/summary.json` и `results/paired_errors.csv`, вторая только сверяет
+их. Сборка проверена на Tectonic 0.17.0; при первом запуске нужен локальный
+кэш пакетов или сеть. Исходные CSV/JSON и сохранённый `results/paper_figure.pdf`
+достаточны для сборки, полный эксперимент выполняется командами выше.
+
+Рисунок при необходимости пересобирается отдельно:
+
+```bash
+.venv/bin/python -m experiment.plot_paper_figure
+```
+
+Требуется Matplotlib 3.11.2, как указано в разделе о рисунке для статьи.
+
+Итоговые файлы: [PDF](../paper/paper.pdf) и [исходник](../paper/paper.tex).

@@ -8,7 +8,8 @@
 
 Исследовательская мини-статья
 
-> Urban Plume Centroid Prediction: A Neural Surrogate versus a Gaussian Baseline.
+> Predicting the Concentration-Weighted Center of Urban Pollutant Plumes:
+> A Comparison of a Gaussian Model and a Deep Learning Model.
 
 Статья — парное сравнение ошибок центров шлейфа нейросетевого суррогата
 `combined_family_ft_best` и стационарного гауссова baseline относительно LES
@@ -61,11 +62,3 @@
    Не утверждать, что полные тексты просмотрены вне репозитория.
 10. Существующие файлы ДЗ2 сохранять; новые файлы каркаса не должны менять
     поведение `checks/check_hw2.py`.
-
-## Критерий завершения шага 1
-
-- ветка `week10-paper` создана ровно от тега `hw2`;
-- файлы каркаса созданы, существующие файлы ДЗ2 не изменены;
-- `.venv/bin/python checks/check_hw2.py --dry-run` завершается кодом 0;
-- каркас зафиксирован локальным коммитом по указанию автора;
-- список созданных файлов и статус допущений переданы пользователю.
