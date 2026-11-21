@@ -42,10 +42,9 @@ of a neural surrogate and a stationary Gaussian baseline against large-eddy
 simulation (LES) over 25 urban layouts. The primary endpoint is the
 scene-averaged difference between the Gaussian and surrogate centroid errors,
 reported with a 95\% paired bootstrap interval; medians and the number of scenes
-within 20\,m are descriptive. The Gaussian baseline follows the ISC3 formulation,
-and its physical assumptions are subject to author confirmation before any
-results are produced. This version is a scaffold: no numerical result is
-reported.
+within 20\,m are descriptive. The Gaussian baseline follows the ISC3 formulation
+with the assumptions fixed in the study protocol. This version is a scaffold:
+no numerical result is reported.
 \end{abstract}
 
 \section{Introduction}
@@ -127,13 +126,12 @@ The baseline is a stationary Gaussian dispersion model in the spirit of ISC3:
 a point-source kernel \cite[\S1.1.1, Eq.~(1-1)]{epa1995}, ground reflection
 \cite[\S1.1.6.1, Eq.~(1-50)]{epa1995}, urban Briggs coefficients
 \cite[Tables 1-3 and 1-4]{epa1995}, and an area-source representation
-\cite[\S1.2.3]{epa1995}. Emission height and receptor height are kept as separate
-quantities: the emission height belongs to the source configuration of a scene,
-whereas the receptor height is fixed by the evaluation layer at Z1 $=3$\,m and is
-not a free parameter. The source composition, release height, relative element
-weights, axis orientation, transport direction, neutral stability class~D, and
-near-field treatment are proposed assumptions that must be confirmed against one
-scene on the simulation server before results are generated.
+\cite[\S1.2.3]{epa1995}. The baseline places the emission at 4\,m, the midpoint
+of the 0--8\,m release layer, and preserves the total emission of each source.
+The receptor height is fixed at Z1 $=3$\,m. The transport direction follows the
+negative pressure gradient for each scene. The baseline uses urban Briggs
+coefficients for neutral class~D and a 1\,m lower bound on the downwind
+distance used to compute the dispersion widths.
 
 \subsection{Paired comparison}
 
@@ -158,9 +156,8 @@ above the diagonal indicate a smaller Gaussian error for that scene.
 \section{Results}
 \label{sec:results}
 
-This section is a placeholder. Numerical results are intentionally omitted from
-this scaffold. They will be inserted only after the Gaussian baseline assumptions
-are confirmed and the experiment is verified by the author. The planned content
+This section is a placeholder. Numerical results will be inserted after the
+author verifies the experiment. The planned content
 is the paired table over \texttt{geometry\_id} and \texttt{scene\_name}, the
 scatter plot of per-scene errors, and the scene-averaged difference with its
 95\% paired bootstrap interval. No acceptance threshold is defined for the new
@@ -192,8 +189,7 @@ Conclusions do not transfer to other geometries, winds, tracers, or layers.
 This section is a placeholder. The scaffold fixes the data, the metric, and the
 statistical protocol for a paired comparison of plume centroids between the
 neural surrogate and a stationary Gaussian baseline on 25 urban layouts.
-The author must confirm the baseline assumptions before the experiment and
-verify the numerical results before drawing conclusions.
+The author will verify the numerical results before drawing conclusions.
 
 \section*{Reproducibility}
 
