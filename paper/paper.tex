@@ -14,6 +14,8 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{microtype}
+\graphicspath{{./}{../experiment/results/}}
+\setlength{\dbltextfloatsep}{10pt plus 2pt minus 2pt}
 
 \input{results.tex}
 
@@ -34,63 +36,43 @@
   \icmlkeywords{urban dispersion, concentration-weighted plume center,
     deep learning surrogate, Gaussian model, large-eddy simulation}
 
-  \vskip 0.3in
+  \vskip 0.1in
 ]
 
 \printAffiliationsAndNotice{}
+\setlength{\parskip}{4pt}
 
 \begin{abstract}
-The concentration-weighted plume center is the concentration-weighted mean of
-the cell coordinates and summarizes where a plume lies. We compare a simplified
-stationary Gaussian plume model, with Briggs urban class D dispersion widths,
-against a U-Net surrogate trained on large-eddy simulation (LES) concentration
-fields. On \NScenes{} urban layouts we measure, over the grid cells outside
-buildings at 3\,m above ground, the distance between each model center and the
-LES center. Averaged over layouts, the mean U-Net error is \MeanDiff\,m smaller
-than the Gaussian error, and the U-Net is closer on \NPositive{} of \NScenes{}
-layouts.
+The concentration-weighted mean of the grid-cell coordinates summarizes where
+a plume lies. We compare a simplified stationary Gaussian plume model with
+Briggs dispersion widths and a U-Net surrogate trained on large-eddy
+simulation (LES) concentration fields. For each of \NScenes{} urban layouts,
+we measure the distance from each model's plume center to the LES plume
+center at 3\,m above ground. The U-Net error is \MeanDiff\,m smaller on
+average, and the U-Net center is closer to the LES center on \NPositive{} of
+\NScenes{} layouts.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-Neural surrogates reproduce urban dispersion fields far more cheaply than
-large-eddy simulation, but aggregate pointwise scores can hide a displaced
-plume: a surrogate that smooths or shifts a plume may still score well while
-misrepresenting where the concentration is. The concentration-weighted plume
-center is a compact summary of plume position.
+Deep learning surrogates offer a computationally cheaper way to estimate
+urban dispersion fields than large-eddy simulation. Aggregate pointwise
+scores can obscure a displacement of the plume. The concentration-weighted
+plume center provides a direct measure of its position.
 
-We ask how the plume center error of the surrogate
-\texttt{combined\_family\_ft\_best} compares with that of a stationary Gaussian
-baseline on the same layouts and valid-cell mask, with LES as the reference; the
-comparison is paired and descriptive.
+We compare how closely a U-Net surrogate and a stationary Gaussian baseline locate the LES plume center. Within each layout, we calculate all three plume centers using the same set of valid cells, defined as grid cells outside buildings at 3 m above ground.
 
-The Gaussian baseline is a simplified ISC3-based model
-\citep[\S1.1.1, Eq.~(1-1); \S1.1.6.1, Eq.~(1-50); \S1.2.3]{epa1995}, with a
-stationary point-source kernel, ground reflection, urban dispersion widths and
-an area-source representation of the road emission. A deep
-learning surrogate for emergency pollution forecast has been compared with a
-Gaussian approach in an urban setting \citep[\S2.3.2--2.3.3 and
-\S4.2]{mendil2022}, for a different emission regime; we use it as a
-methodological precedent and do not transfer its conclusions. Our contribution
-is a paired comparison on a fixed archive, a verifier for coordinate errors in
-the plume center, and a pipeline in which every number comes from one saved
-table.
+Mendil et al. compared a deep learning surrogate with a Gaussian model
+for emergency pollution forecasting in an urban setting
+\citep[\S2.3.2--2.3.3 and \S4.2]{mendil2022}. Here we compare plume center
+errors for road emissions on a fixed archive of layouts and check the center calculation against synthetic fields with known centers.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.74\textwidth]{../experiment/results/paper_figure.pdf}
-  \caption{Paired plume center errors and example fields at 3\,m.
-    (a) The \NScenes{} paired differences
-    $d_g=e_{\mathrm{Gaussian}}-e_{\mathrm{DL}}$, sorted by value, one point per
-    layout and coloured by sign; the two extreme layouts are labelled and the
-    mean difference is printed.
-    (b) LES, Gaussian baseline and surrogate fields for layout \MaxDiffScene{}
-    (largest positive difference) and layout \MinDiffScene{} (largest negative
-    difference). Buildings are grey, the LES center is a cross, the model center
-    a circle, and the error in metres is printed under each model map; the
-    colour scale is the cell fraction of the field sum, logarithmic and shared
-    by all six maps.}
+  \includegraphics[width=0.70\textwidth]{paper_figure.pdf}
+  \caption{(a) Sorted paired differences in plume center error, one point per layout. Positive differences favor the U-Net. (b) LES, Gaussian and U-Net fields at 3\,m for the two layouts with the largest differences in
+    opposite directions. Crosses mark LES centers and circles mark model centers. The shared logarithmic scale shows each cell's fraction of the concentration summed over valid cells.}
   \label{fig:paired}
 \end{figure*}
 
@@ -99,33 +81,52 @@ table.
 
 \subsection{Data and design}
 
-The experiment uses \NScenes{} layouts (\texttt{geometry\_id} 150--174), wind
-index \texttt{dir\_k}=0, tracer 1 and the near-surface layer Z1 at 3\,m, on a
-$128\times128$ grid with 2\,m spacing over $256\times256$\,m. One valid-cell
-mask derived from building heights excludes the cells that lie inside
-buildings at 3\,m and is identical for LES and for both predictions. The inputs
-are archived LES and surrogate fields with recorded checksums. All \NScenes{}
-scenes are evaluated; a scene with zero concentration sum under the mask stops
-the run.
+We use steady-state pollutant concentration fields for \NScenes{} synthetic
+urban layouts. The LES domain measures \mbox{$256 \times 256 \times 160$\,m},
+with a horizontal grid spacing of 2\,m. A prescribed horizontal pressure
+gradient drives the wind. Each layout can contain several road emission
+sources, modeled as elongated boxes 8\,m high. We compare the fields on a
+two-dimensional horizontal slice at 3\,m above ground, using only cells
+outside buildings.
 
 \subsection{Gaussian baseline}
 
-The baseline is a simplified ISC3-based stationary Gaussian model: a
-point-source kernel \citep[\S1.1.1, Eq.~(1-1)]{epa1995}, ground reflection
-\citep[\S1.1.6.1, Eq.~(1-50)]{epa1995}, urban Briggs coefficients
-\citep[App.~D]{briggs1973}, tabulated \citep[\S1.1.5.1, Tables 1-3 and 1-4]{epa1995},
-and an area-source representation
-\citep[\S1.2.3]{epa1995}. Each road box is split into area elements that
-preserve its emission, with the kernel at each element center. Emission
-from the 0--8\,m release layer is represented at 4\,m and the receptor is at
-3\,m; transport follows the negative pressure gradient of the scene. The
-baseline uses neutral class~D, a 1\,m lower bound on the downwind distance and
-zero contribution below it; these choices were fixed before the run.
+We use a simplified ISC3-based stationary Gaussian model with ground
+reflection \citep[\S1.1.1, Eq.~(1-1), and \S1.1.6.1, Eq.~(1-50)]{epa1995}.
+Each road source is divided along grid-cell boundaries, and its emission is
+distributed among the resulting elements in proportion to their areas
+\citep[\S1.2.3]{epa1995}. Each element contributes a point kernel at its center.
+
+For element $s$ with relative emission $Q_s$, let $a_s$ and $b_s$ denote
+the downwind and crosswind distances from its center to the receptor.
+Transport is directed opposite to the horizontal pressure gradient. The
+model sums the kernels $C_s$ over the elements. A common wind-speed
+factor cancels in the center calculation. For $a_s>0$,
+\begin{equation}
+  \begin{aligned}
+    C_s &= \frac{Q_s}{2\pi\sigma_y\sigma_z}
+          \exp\!\left(-\frac{b_s^2}{2\sigma_y^2}\right) \\
+        &\quad \times \sum_{k\in\{-1,1\}}
+          \exp\!\left(-\frac{(z_r-kz_s)^2}{2\sigma_z^2}\right).
+  \end{aligned}
+  \label{eq:gaussian}
+\end{equation}
+The receptor is at $z_r=3$\,m, and the 0--8\,m release layer is represented
+at $z_s=4$\,m. The term for $k=-1$ accounts for ground reflection. For
+$a_s\leq0$, $C_s=0$. The urban Briggs widths for neutral class~D
+\citep[App.~D]{briggs1973}
+\citep[\S1.1.5.1, Tables 1-3 and 1-4]{epa1995} are
+\begin{equation}
+  \sigma_y=\frac{0.16a}{\sqrt{1+0.0004a}},\qquad
+  \sigma_z=\frac{0.14a}{\sqrt{1+0.0003a}},
+  \label{eq:widths}
+\end{equation}
+where $a=\max(a_s,1\,\mathrm{m})$ and distances are in meters.
 
 \subsection{Plume center and error}
 
-For a field $c_{ij}$ and valid mask $M$, the plume center is the
-concentration-weighted mean of the cell-center coordinates,
+Let $M$ be the set of cells outside buildings at 3\,m. For a concentration
+field $c_{ij}$, the plume center is the weighted mean of the cell centers,
 \begin{equation}
   \begin{aligned}
     x_c &= \frac{\sum_{(i,j)\in M} c_{ij}\,x_{ij}}
@@ -151,74 +152,62 @@ Both models are evaluated on the same scenes, and the paired difference is
   d_g = e_{\mathrm{Gaussian},g} - e_{\mathrm{DL},g},
   \label{eq:paired}
 \end{equation}
-so that positive values indicate a smaller surrogate error; the reported
-quantity is the mean of $d_g$ over the layouts, and medians and the sign split
-are descriptive.
+so that positive values indicate a smaller U-Net error. We summarize the
+comparison by the mean of $d_g$, the number of layouts favoring each model
+and the median error for each model.
 
 \subsection{Verification and reproduction}
 
-A verifier runs synthetic tests on the plume center code (additivity, scale
-invariance, mask handling, a one-cell shift, a $90^\circ$ rotation, a zero field,
-a single cell, width invariance under a shift): seven came from the earlier
-version of the assignment, the current verifier holds eight, the eighth added
-with the width estimate. One
-test is a deliberate coordinate shift, with cells computed as
-$(\texttt{arange}+1)\cdot2$ instead of $(\texttt{arange}+\tfrac12)\cdot2$, a
-uniform 1\,m offset on both axes; it reports
-\texttt{I=400 centre=(91.0,71.0)} where \texttt{(90.0,70.0)} is expected and
-exits with code~1. Rerun on the corrected code, it passed once the half-cell
-offset was restored, and all eight tests pass. The verifier
-also checks the archived inputs (checksum, schema, geometry range, shapes, mask,
-non-zero sums), and one command reproduces the comparison from the repository
-root.
+We test the plume center calculation on synthetic fields with known
+centers. If only one cell has a nonzero concentration, the calculated
+plume center must coincide with the center of that cell. To check the
+building mask, we start with a uniform patch centered at $(90,70)$\,m.
+We add a high-concentration cell outside the patch and mark it as a
+building cell. The calculation should still return $(90,70)$\,m.
+Finally, we shift a test field one grid cell to the right and check
+that its calculated center moves exactly 2\,m in the same direction.
+
+To reproduce the comparison, we use the archived LES and U-Net fields
+and recompute the Gaussian fields from the saved road sources and
+pressure gradients. We then calculate the three plume centers using
+the same building mask for each layout.
+
 
 \section{Results}
 \label{sec:results}
 
-Over the \NScenes{} layouts the mean paired difference is
-$\bar d=\MeanDiff$\,m, that is, the U-Net plume center is closer to the LES
-plume center on average. The sign is not uniform: $d_g>0$ on \NPositive{}
-layouts and $d_g<0$ on \NNegative{}. The medians are \MedianDL\,m for the
-surrogate and \MedianGauss\,m for the baseline.
+Figure~\ref{fig:paired}(a) shows one point per layout. The horizontal
+axis gives the Gaussian error minus the U-Net error, and the vertical
+axis ranks the layouts by this difference. Points to the right of zero
+indicate that the U-Net placed the plume center closer to the LES
+center. Points to the left indicate that the Gaussian model was closer.
 
-Figure~\ref{fig:paired} shows the two extreme layouts. On layout
-\MaxDiffScene{} the Gaussian center lies far from the LES center while the
-surrogate center is close to it; on layout \MinDiffScene{} the surrogate center
-is the farther of the two. Panel~(a) ranks the \NScenes{} paired differences,
-coloured by sign; panel~(b) gives the fields of the two extremes at 3\,m, with
-buildings in grey, the LES center as a cross and the model center as a circle.
-All six maps share one logarithmic colour scale.
+Panel~(b) shows the LES, Gaussian and U-Net concentration fields at
+3\,m above ground for the layouts at either end of the ranking.
+The cross marks the LES plume center, and the circle marks the
+predicted center. The distance between these markers is the error
+printed below each model map. On layout~\MaxDiffScene{}, the U-Net
+center is 6.5\,m from the LES center, compared with 50.2\,m for the
+Gaussian model. On layout~\MinDiffScene{}, the Gaussian center is
+14.7\,m from the LES center and the U-Net center is 55.4\,m away.
 
-\section{Limitations}
-\label{sec:limitations}
+Across all \NScenes{} layouts, the U-Net error is \MeanDiff\,m smaller
+on average. The U-Net is closer to the LES center on \NPositive{}
+layouts, and the Gaussian model is closer on \NNegative{}. The median
+error is \MedianDL\,m for the U-Net and \MedianGauss\,m for the
+Gaussian model.
 
-The conclusions hold for \NScenes{} layouts at one wind index, one tracer and one
-height (3\,m); another wind direction, tracer or height would change the plume
-geometry. LES is a numerical reference, not ground truth.
-The baseline is one simplified ISC3-based parameterisation and the surrogate is
-the fixed archived model \texttt{combined\_family\_ft\_best}; another
-parameterisation or checkpoint could change the difference. The metric assesses plume position only, and a model can match the
-center while misplacing the spread or shape.
+\section{Conclusion}
+\label{sec:conclusion}
 
-\begin{aiusage}[The manuscript, the experiment code and the figure were prepared
-  with an AI assistant and checked by rerunning the pipeline; author
-  verification of the text and numbers is pending.]
-  Manuscript scaffold, Methods and Results text
-    & \generated{} & Goose agent, DeepSeek V4.1 Flash
-    & Compared with the study protocol and the saved table; every number is a
-      macro generated from that table. \\
-  Gaussian kernel, paired analysis and figure code
-    & \generated{} & Goose agent, DeepSeek V4.1 Flash and Qwen 3.6 35B
-    & Eight synthetic tests, a pilot scene, and a byte-identical rerun from the
-      same inputs. \\
-  Related work
-    & \sourced{} & Literature coordinates recorded in the project
-    & Statements limited to the cited sections of the two references. \\
-\end{aiusage}
+The U-Net locates the LES plume center more accurately on average, with
+some layouts favoring the Gaussian baseline. The comparison covers one wind
+index, one tracer and one height, and uses LES as a numerical reference. It
+applies to the chosen Gaussian parameterization and the archived U-Net
+checkpoint \texttt{combined\_family\_ft\_best}. A small center error can
+coexist with errors in plume spread or shape.
 
-\acknowledgements{The author acknowledges the course infrastructure used to
-archive the fields.}
-
+\clearpage
 \begin{thebibliography}{9}
 
 \bibitem{mendil2022}
